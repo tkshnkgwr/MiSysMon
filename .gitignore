@@ -1,0 +1,25 @@
+# Cargo (Rust) 関連
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# フロントエンド関連
+/node_modules/
+/.pnpm-store/
+.env
+.env.*
+!.env.example
+dist/
+build/
+
+# OS・エディタ関連
+.DS_Store
+Thumbs.db
+/.vscode/
+/.idea/
+*.un~
+*~
+*.swp
+
+# 開発時のでバックログ
+**/*.log
