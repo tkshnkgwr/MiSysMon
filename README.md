@@ -1,53 +1,60 @@
-# Mini System Monitor (Rust Edition)
+# MiSysMon (Mini System Monitor - Rust Edition)
+
+📖 [日本語版はこちら (Japanese Version)](./README.ja.md)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)
 
-低リソース環境（スペックの限られたWindows PC）に最適化された、超軽量・極細のデスクトップシステムモニター。
+An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resource environments (such as lower-spec Windows PCs).
 
 | CPU | MEM | NET | DISK | IO | CLOCK |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | 5.1% (42°C) | 12.3% | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | 2026/04/21 12:00:00 |
 
-## 🌟 特徴
+## 🌟 Features
 
-- **超軽量動作:** Pure Rust + `egui` (Immediate mode GUI) により、WebViewを使用するフレームワークよりも圧倒的に低いメモリ消費とCPU負荷。
-- **極細・省スペース:** 1100x32px の横長バー形式。デスクトップの端に配置しても作業の邪魔になりません。
-- **常時最前面 / 背景透過:** 他のウィンドウに隠れることなく、システム情報を常に把握。
-- **位置記憶機能:** 終了時の位置を自動保存し、次回の起動時に同じ場所で開きます。
-- **情報の透明性:** コンソール窓（DOS窓）を表示せず、スマートなGUIアプリとして動作。
+- **Ultra-Lightweight Operation:** Built with pure Rust + `egui` (Immediate-mode GUI), resulting in significantly lower memory footprint and CPU utilization compared to WebView-based frameworks (like Tauri or Electron).
+- **Slim & Space-Saving:** A horizontal bar design of 1100x32px. It fits neatly at the top or bottom of your desktop without interrupting your workflow.
+- **Always on Top / Transparent Background:** Transparent background overlay that always stays on top of other windows so you can keep an eye on your system at all times.
+- **Window Position Persistence:** Automatically remembers and restores the window position from the last session upon launching.
+- **Zero Distraction / Native GUI:** Runs as a polished GUI application without opening a background Command Prompt (black DOS window).
 
-## 📊 監視項目
+## 📊 Monitored Metrics
 
-- **CPU:** 使用率 (%) および パッケージ温度 (°C)
-- **Memory:** 使用率 (%) 
-- **Network:** 実時間の上り (^) / 下り (v) 通信速度
-- **Disk Space:** システムドライブの使用量と全容量
-- **Disk I/O:** リアルタイムの読み込み (R) / 書き込み (W) 速度
-- **Clock:** 日時・秒単位の時計
+- **CPU:** Usage (%) and Package Temperature (°C) (*Note: Displays `--°C` if sensor data is unavailable due to OS security limits or unmatched hardware. Check `sensors_debug.log` for diagnostics.*)
+- **Memory:** Utilized percentage (%)
+- **Network:** Active real-time uploads (^) and downloads (v) speeds
+- **Disk Space:** Utilized space and total capacity of the system drive
+- **Disk I/O:** Real-time disk read (R) and write (W) speeds
+- **Clock:** Fully integrated date & time display with seconds formatting
 
-## 🛠️ セットアップとビルド
+## 🛠️ Setup and Build Instruction
 
-### プリリクエスト
-- [Rust](https://www.rust-lang.org/ja/tools/install) (latest stable)
+### Prerequisites
+- [Rust](https://www.rust-lang.org/tools/install) (latest stable)
 
-### ビルド手順
+### Build Steps
 ```powershell
-# リポジトリのクローン
-git clone https://github.com/your-username/mini-system-monitor.git
-cd mini-system-monitor
+# Clone the repository
+git clone https://github.com/tkshnkgwr/MiSysMon.git
+cd MiSysMon
 
-# リリースビルド (最適化済み・単一バイナリ)
+# Build a release package (highly optimized single binary)
 cargo build --release
 ```
-実行ファイルは `target/release/mini-system-monitor.exe` に生成されます。
+The compiled binary executable will be generated at `target/release/mini-system-monitor.exe`.
 
-## 🎨 デザイン設計ガイドライン
-本プロジェクトは、視認性と実用性を両立させるため、以下の設計原則に従っています。
-- **Impact Style:** 数値の視認性を高める力強いタイポグラフィの採用。
-- **Zero Distraction:** 点滅や過度なアニメーションを排除した安定したレイアウト。
-- **Hardware Feel:** 物理的な計測機のような、精密で機能的なUI。
+## 🎨 Under the Hood Design Principles
+To balance glanceable legibility and utility:
+- **Impact-Style Typography:** Utilizes strong, clear, and highly visible fonts for critical numerical readings.
+- **Zero Flicker / Fluid Refresh:** Excludes flashing, blinking, or unnecessary heavy animations to maintain a stable, non-intrusive layout.
+- **Hardware Dial Aesthetic:** A sleek interface modeled after professional rack unit diagnostic panels.
 
-## 📄 ライセンス
+## 🔍 Troubleshooting (CPU temperature not displaying)
+Depending on your motherboard's vendor-specific sensor design or Windows access control/WMI permissions, CPU temperature polling might fail.
+1. **Try elevation:** Right-click the executable and select **"Run as Administrator"**.
+2. **Review Diagnostics:** Check `sensors_debug.log` generated automatically in the application directory on launch. If it says `Detected Sensors Count: 0`, the Windows standard API cannot interface with your motherboard's thermal sensors natively.
+
+## 📄 License
 MIT License
