@@ -24,6 +24,5 @@ graph TD
     subgraph "User Interaction"
         DRAG[Drag Grip] -->|Move Window| APP
         CLOSE[Close Button] -->|Terminate| APP
-        TOGGLE[Ctrl+Shift+Alt+Q] -->|Toggle Visibility| APP
     end
 ```

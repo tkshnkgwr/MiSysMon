@@ -15,6 +15,7 @@
 | 更新 | 1秒ごとに数値が変わるか | 成功 | request_repaint_after(1s) |
 | 移動 | ドラッグ移動が可能か | 成功 | ViewportCommand::StartDrag |
 | 温度 | CPU温度が取得できるか | 成功 | sysinfo::Components |
+| I/O | ディスクI/O(読み書き速度)が正しく計算・表示されるか | 成功 | プロセス毎の合計と秒間差分計算 |
 | 安定性 | 数値変動でガタつかないか | 成功 | 固定幅(add_sized)適用済 |
 | 終了 | 終了ボタンが反応するか | 成功 | ViewportCommand::Close |
 | ビルド | cargo run でビルドが通るか | 成功 | Cargo.toml 依存関係修正済 |

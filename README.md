@@ -10,7 +10,7 @@ An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resour
 
 | CPU | MEM | NET | DISK | IO | CLOCK |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| 5.1% (42°C) | 12.3% | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | 2026/04/21 12:00:00 |
+| 5.1% (42°C) | 12.3% | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | 2026/04/21(Tue) 12:00:00 |
 
 ## 🌟 Features
 
