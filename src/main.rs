@@ -33,8 +33,6 @@ struct SystemMonitor {
     disk_write: u64,
     prev_net_up: u64,
     prev_net_down: u64,
-    prev_disk_read: u64,
-    prev_disk_write: u64,
     disk_used: u64,
     disk_total: u64,
     config: Config,
@@ -42,8 +40,9 @@ struct SystemMonitor {
 
 impl SystemMonitor {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        let mut sys = System::new_all();
-        sys.refresh_all();
+        let mut sys = System::new();
+        sys.refresh_cpu();
+        sys.refresh_memory();
         
         let components = Components::new_with_refreshed_list();
         
@@ -77,8 +76,6 @@ impl SystemMonitor {
             disk_write: 0,
             prev_net_up: 0,
             prev_net_down: 0,
-            prev_disk_read: 0,
-            prev_disk_write: 0,
             disk_used: 0,
             disk_total: 0,
             config,
@@ -86,8 +83,11 @@ impl SystemMonitor {
     }
 
     fn update_stats(&mut self) {
-        self.sys.refresh_all();
-        self.sys.refresh_processes(); // プロセス情報を更新してディスクIOを取得
+        self.sys.refresh_cpu();
+        self.sys.refresh_memory();
+        self.sys.refresh_processes_specifics(
+            sysinfo::ProcessRefreshKind::new().with_disk_usage(),
+        );
         self.networks.refresh_list();
         self.networks.refresh();
         self.disks.refresh_list();
@@ -141,7 +141,7 @@ impl SystemMonitor {
         self.prev_net_up = total_up;
         self.prev_net_down = total_down;
 
-        // ディスクIO速度 (プロセスごとの合計から差分計算)
+        // ディスクIO速度 (プロセスごとの合計)
         let mut total_read = 0;
         let mut total_write = 0;
         for process in self.sys.processes().values() {
@@ -149,10 +149,8 @@ impl SystemMonitor {
             total_read += usage.read_bytes;
             total_write += usage.written_bytes;
         }
-        self.disk_read = total_read.saturating_sub(self.prev_disk_read);
-        self.disk_write = total_write.saturating_sub(self.prev_disk_write);
-        self.prev_disk_read = total_read;
-        self.prev_disk_write = total_write;
+        self.disk_read = total_read;
+        self.disk_write = total_write;
 
         // ディスク使用量
         let mut d_total = 0;
