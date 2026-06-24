@@ -56,5 +56,24 @@ Depending on your motherboard's vendor-specific sensor design or Windows access 
 1. **Try elevation:** Right-click the executable and select **"Run as Administrator"**.
 2. **Review Diagnostics:** Check `sensors_debug.log` generated automatically in the application directory on launch. If it says `Detected Sensors Count: 0`, the Windows standard API cannot interface with your motherboard's thermal sensors natively.
 
+## ⚙️ Configuration & Startup Settings
+
+### Run on Windows Startup (Persistence)
+If you want to run this application automatically when Windows starts, register it using the following steps:
+1. Create a shortcut of `target/release/mini-system-monitor.exe`.
+2. Press `Win + R` on your keyboard to open the "Run" dialog.
+3. Type `shell:startup` and press Enter (this opens the Windows Startup folder).
+4. Place (copy or move) the created shortcut into this folder.
+
+### Configuration Storage & Resetting Position
+Window location and other application states are persisted in:
+`%APPDATA%\Mini System Monitor\data\app.ron`
+*(Full path: `C:\Users\<username>\AppData\Roaming\Mini System Monitor\data\app.ron`)*
+
+**How to reset if the window goes off-screen:**
+1. Close the application by clicking the `×` button on the far right.
+2. Delete the `app.ron` file (or the entire `Mini System Monitor` folder).
+3. Relaunch the application. It will open in the default position and size, generating a fresh config file.
+
 ## 📄 License
-MIT License
+MIT License (Refer to the [LICENSE](./LICENSE) file for details)
