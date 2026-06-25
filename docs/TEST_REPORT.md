@@ -1,5 +1,7 @@
 # Test Report
 
+**適合バージョン**: mini-system-monitor v0.1.0
+
 ## 1. テスト環境
 - **OS:** Web Container (Simulated Windows Environment)
 - **Rust Version:** 1.75+
@@ -20,6 +22,7 @@
 | 終了 | 終了ボタンが反応するか | 成功 | ViewportCommand::Close |
 | ビルド | cargo run でビルドが通るか | 成功 | Cargo.toml 依存関係修正済 |
 | 保存 | ウィンドウ位置が保存・復元されるか | 成功 | eframe persistence (serde_json) |
+| 二重起動防止 | 2つ目のウィンドウは開かないか | 成功 | Windows Named Mutex |
 
 ## 3. パフォーマンス計測 (推定)
 - **CPU負荷:** 0.1% 未満 (必要な情報のみの最小限リフレッシュおよびプロセスの限定更新により、最適化前と比較してさらに削減)

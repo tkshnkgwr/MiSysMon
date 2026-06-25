@@ -19,10 +19,11 @@ An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resour
 - **Always on Top / Transparent Background:** Transparent background overlay that always stays on top of other windows so you can keep an eye on your system at all times.
 - **Window Position Persistence:** Automatically remembers and restores the window position from the last session upon launching.
 - **Zero Distraction / Native GUI:** Runs as a polished GUI application without opening a background Command Prompt (black DOS window).
+- **Single Instance Prevention:** Uses a Windows Named Mutex to prevent multiple instances from running simultaneously, avoiding UI overlaps and unnecessary resource consumption by instantly terminating subsequent launches.
 
 ## 📊 Monitored Metrics
 
-- **CPU:** Usage (%) and Package Temperature (°C) (*Note: Displays `--°C` if sensor data is unavailable due to OS security limits or unmatched hardware. Check `sensors_debug.log` for diagnostics.*)
+- **CPU:** Usage (%) and Package Temperature (°C) (*Note: Displays `--°C` if sensor data is unavailable due to OS security limits or unmatched hardware. Check `%APPDATA%\Mini System Monitor\sensors_debug.log` for diagnostics.*)
 - **Memory:** Utilized percentage (%)
 - **Network:** Active real-time uploads (^) and downloads (v) speeds
 - **Disk Space:** Utilized space and total capacity of the system drive
@@ -54,7 +55,7 @@ To balance glanceable legibility and utility:
 ## 🔍 Troubleshooting (CPU temperature not displaying)
 Depending on your motherboard's vendor-specific sensor design or Windows access control/WMI permissions, CPU temperature polling might fail.
 1. **Try elevation:** Right-click the executable and select **"Run as Administrator"**.
-2. **Review Diagnostics:** Check `sensors_debug.log` generated automatically in the application directory on launch. If it says `Detected Sensors Count: 0`, the Windows standard API cannot interface with your motherboard's thermal sensors natively.
+2. **Review Diagnostics:** Check `%APPDATA%\Mini System Monitor\sensors_debug.log` generated automatically in the configuration directory on launch. If it says `Detected Sensors Count: 0`, the Windows standard API cannot interface with your motherboard's thermal sensors natively.
 
 ## ⚙️ Configuration & Startup Settings
 
