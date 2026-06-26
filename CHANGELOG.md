@@ -5,6 +5,9 @@
 - **自動ドキュメント作成・更新ルールの追加:** AIエージェント用の個別指示書 `.agents/AGENTS.md` を新規作成。コード変更時に `CHANGELOG.md` や `SPEC.md` などの関連ドキュメントを自動で走査・更新するプロセスを規定しました。
 - **自動化スクリプトの追加:** `scripts/` ディレクトリを新設し、Rustプロジェクト用のバージョン更新・ドキュメント（`docs/SPEC.md`, `docs/TEST_REPORT.md`）同期スクリプト `bump-version.ps1` を追加しました。これに伴い、`SPEC.md` および `TEST_REPORT.md` にバージョン管理用のメタデータヘッダーを追加しました。
 
+### Fixed
+- **README.ja.mdにおける曜日表記例の修正:** 実装（常に英語略称で表示）とドキュメントの乖離を解消するため、`README.ja.md` 内の日時表示例の曜日表記を漢字 `(火)` から `(Tue)` に修正しました。
+
 ### Optimized
 - **内部ドキュメントの整理:** プロジェクトルートに散らばっていた内部用設計・検証ドキュメント（`SPEC.md`, `DIAGRAM.md`, `FOOTPRINTS.md`, `TEST_REPORT.md`）を新設した `docs/` ディレクトリに移動し、プロジェクトルートを整理しました。
 - **テンプレートガイドの改訂:** `docs/project_template_guide.md` をTauri v2用の構成から、eframe/egui等を用いた純粋なRustデスクトップアプリ開発向けの構成へ完全に改訂・最適化しました。
