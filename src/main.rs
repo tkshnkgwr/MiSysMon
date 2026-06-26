@@ -35,7 +35,7 @@ struct SystemMonitor {
 impl SystemMonitor {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
         let mut sys = System::new();
-        sys.refresh_cpu();
+        sys.refresh_cpu_all();
         sys.refresh_memory();
 
         let components = Components::new_with_refreshed_list();
@@ -53,7 +53,10 @@ impl SystemMonitor {
             use std::io::Write;
             let _ = writeln!(file, "Detected Sensors Count: {}", components.len());
             for c in &components {
-                let _ = writeln!(file, "Label: '{}', Temp: {}°C", c.label(), c.temperature());
+                let temp_str = c
+                    .temperature()
+                    .map_or("N/A".to_string(), |t| format!("{:.1}", t));
+                let _ = writeln!(file, "Label: '{}', Temp: {}°C", c.label(), temp_str);
             }
         }
 
@@ -86,19 +89,19 @@ impl SystemMonitor {
     }
 
     fn update_stats(&mut self) {
-        self.sys.refresh_cpu();
+        self.sys.refresh_cpu_all();
         self.sys.refresh_memory();
-        self.sys
-            .refresh_processes_specifics(sysinfo::ProcessRefreshKind::new().with_disk_usage());
-        self.networks.refresh_list();
-        self.networks.refresh();
-        self.disks.refresh_list();
-        self.disks.refresh();
-        self.components.refresh_list();
-        self.components.refresh();
+        self.sys.refresh_processes_specifics(
+            sysinfo::ProcessesToUpdate::All,
+            true,
+            sysinfo::ProcessRefreshKind::nothing().with_disk_usage(),
+        );
+        self.networks.refresh(true);
+        self.disks.refresh(false);
+        self.components.refresh(false);
 
         // CPU使用率
-        self.cpu_usage = self.sys.global_cpu_info().cpu_usage();
+        self.cpu_usage = self.sys.global_cpu_usage();
 
         // CPU温度取得
         // 優先順位1: 明示的なCPU/温度に関連するラベルを持つセンサー
@@ -115,7 +118,7 @@ impl SystemMonitor {
                 label.contains("THM") ||  // Thermal
                 label.contains("TEMP") // Generic
             })
-            .map(|c| c.temperature())
+            .and_then(|c| c.temperature())
             .unwrap_or(0.0);
 
         // 優先順位2: 上記で見つからない（または0度）場合、全センサーの中で最高温度を採用（最も負荷が高い部位＝CPUの可能性大）
@@ -123,7 +126,7 @@ impl SystemMonitor {
             temp = self
                 .components
                 .iter()
-                .map(|c| c.temperature())
+                .filter_map(|c| c.temperature())
                 .fold(0.0, f32::max);
         }
         self.cpu_temp = temp;
@@ -190,9 +193,9 @@ impl eframe::App for SystemMonitor {
         }
     }
 
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         // 現在のウィンドウ位置を監視して保存用に更新 (outer_rect.min -> position)
-        ctx.input(|i| {
+        ui.input(|i| {
             if let Some(rect) = i.viewport().outer_rect {
                 self.config.pos = Some(rect.min);
             }
@@ -205,13 +208,13 @@ impl eframe::App for SystemMonitor {
         }
 
         // ウィンドウ全体のスタイル設定
-        let panel_frame = egui::Frame::none()
+        let panel_frame = egui::Frame::new()
             .fill(egui::Color32::from_rgba_unmultiplied(10, 10, 10, 200)) // 背景透過
-            .inner_margin(egui::Margin::symmetric(10.0, 5.0));
+            .inner_margin(egui::Margin::symmetric(10, 5));
 
         egui::CentralPanel::default()
             .frame(panel_frame)
-            .show(ctx, |ui| {
+            .show(ui, |ui| {
                 // テキスト選択を無効化
                 ui.style_mut().interaction.selectable_labels = false;
 
@@ -223,7 +226,7 @@ impl eframe::App for SystemMonitor {
                             .color(egui::Color32::from_gray(100)),
                     );
                     if drag_label.interact(egui::Sense::drag()).dragged() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
+                        ui.ctx().send_viewport_cmd(egui::ViewportCommand::StartDrag);
                     }
 
                     ui.spacing_mut().item_spacing.x = 15.0;
@@ -289,10 +292,11 @@ impl eframe::App for SystemMonitor {
                         ),
                         140.0,
                     );
+                    label_style(ui, "VER", format!("v{}", env!("CARGO_PKG_VERSION")), 45.0);
 
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if ui.button("×").clicked() {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                            ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
                         }
 
                         let now = chrono::Local::now();
@@ -313,7 +317,7 @@ impl eframe::App for SystemMonitor {
                 });
             });
 
-        ctx.request_repaint_after(Duration::from_secs(1));
+        ui.ctx().request_repaint_after(Duration::from_secs(1));
     }
 }
 
@@ -356,7 +360,7 @@ fn main() -> eframe::Result<()> {
                     .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(1100.0, 32.0)));
             }
 
-            Box::new(SystemMonitor::new(cc))
+            Ok(Box::new(SystemMonitor::new(cc)))
         }),
     )
 }
