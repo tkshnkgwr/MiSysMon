@@ -5,6 +5,8 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)
+[![CI](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml)
+
 
 低リソース環境（スペックの限られたWindows PC）に最適化された、超軽量・極細のデスクトップシステムモニター。
 

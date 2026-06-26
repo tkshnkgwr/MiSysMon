@@ -1,21 +1,15 @@
 #![windows_subsystem = "windows"]
 
 use eframe::egui;
-use sysinfo::{System, Networks, Disks, Components};
+use serde::{Deserialize, Serialize};
 use std::time::{Duration, Instant};
-use serde::{Serialize, Deserialize};
+use sysinfo::{Components, Disks, Networks, System};
 
 // UPDATE 2026-04-16: ウィンドウ位置の保存機能の追加と、表示切替機能の削除。
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Default)]
 struct Config {
     pos: Option<egui::Pos2>,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self { pos: None }
-    }
 }
 
 struct SystemMonitor {
@@ -43,9 +37,9 @@ impl SystemMonitor {
         let mut sys = System::new();
         sys.refresh_cpu();
         sys.refresh_memory();
-        
+
         let components = Components::new_with_refreshed_list();
-        
+
         // DEBUG: センサー情報をファイルに出力（診断用）
         let mut log_path = if let Ok(appdata) = std::env::var("APPDATA") {
             std::path::PathBuf::from(appdata).join("Mini System Monitor")
@@ -64,7 +58,8 @@ impl SystemMonitor {
         }
 
         // 保存された設定の読み込み
-        let config: Config = cc.storage
+        let config: Config = cc
+            .storage
             .and_then(|s| s.get_string(eframe::APP_KEY))
             .and_then(|json| serde_json::from_str(&json).ok())
             .unwrap_or_default();
@@ -93,9 +88,8 @@ impl SystemMonitor {
     fn update_stats(&mut self) {
         self.sys.refresh_cpu();
         self.sys.refresh_memory();
-        self.sys.refresh_processes_specifics(
-            sysinfo::ProcessRefreshKind::new().with_disk_usage(),
-        );
+        self.sys
+            .refresh_processes_specifics(sysinfo::ProcessRefreshKind::new().with_disk_usage());
         self.networks.refresh_list();
         self.networks.refresh();
         self.disks.refresh_list();
@@ -105,10 +99,12 @@ impl SystemMonitor {
 
         // CPU使用率
         self.cpu_usage = self.sys.global_cpu_info().cpu_usage();
-        
+
         // CPU温度取得
         // 優先順位1: 明示的なCPU/温度に関連するラベルを持つセンサー
-        let mut temp = self.components.iter()
+        let mut temp = self
+            .components
+            .iter()
             .find(|c| {
                 let label = c.label().to_uppercase();
                 label.contains("CPU") || 
@@ -117,14 +113,16 @@ impl SystemMonitor {
                 label.contains("TCTL") || // AMD
                 label.contains("TDIE") || // AMD
                 label.contains("THM") ||  // Thermal
-                label.contains("TEMP")    // Generic
+                label.contains("TEMP") // Generic
             })
             .map(|c| c.temperature())
             .unwrap_or(0.0);
 
         // 優先順位2: 上記で見つからない（または0度）場合、全センサーの中で最高温度を採用（最も負荷が高い部位＝CPUの可能性大）
         if temp <= 0.0 {
-            temp = self.components.iter()
+            temp = self
+                .components
+                .iter()
                 .map(|c| c.temperature())
                 .fold(0.0, f32::max);
         }
@@ -211,62 +209,109 @@ impl eframe::App for SystemMonitor {
             .fill(egui::Color32::from_rgba_unmultiplied(10, 10, 10, 200)) // 背景透過
             .inner_margin(egui::Margin::symmetric(10.0, 5.0));
 
-        egui::CentralPanel::default().frame(panel_frame).show(ctx, |ui| {
-            // テキスト選択を無効化
-            ui.style_mut().interaction.selectable_labels = false;
+        egui::CentralPanel::default()
+            .frame(panel_frame)
+            .show(ctx, |ui| {
+                // テキスト選択を無効化
+                ui.style_mut().interaction.selectable_labels = false;
 
-            ui.horizontal(|ui| {
-                // ドラッグ移動の有効化 (文字化け対策: ☷ -> =)
-                let drag_label = ui.label(egui::RichText::new("=").size(14.0).color(egui::Color32::from_gray(100)));
-                if drag_label.interact(egui::Sense::drag()).dragged() {
-                    ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
-                }
-                
-                ui.spacing_mut().item_spacing.x = 15.0;
-
-                let label_style = |ui: &mut egui::Ui, name: &str, val: String, width: f32| {
-                    ui.horizontal(|ui| {
-                        ui.spacing_mut().item_spacing.x = 4.0;
-                        ui.label(egui::RichText::new(name).size(10.0).color(egui::Color32::from_gray(120)));
-                        ui.add_sized([width, 12.0], egui::Label::new(
-                            egui::RichText::new(val).strong().size(12.0).color(egui::Color32::WHITE)
-                        ).selectable(false));
-                    });
-                };
-
-                // 各項目の幅を固定してガタつきを防止
-                let temp_str = if self.cpu_temp > 0.0 {
-                    format!("{:>2.0}°C", self.cpu_temp)
-                } else {
-                    "--°C".to_string()
-                };
-                label_style(ui, "CPU", format!("{:>5.1}% ({})", self.cpu_usage, temp_str), 100.0);
-                label_style(ui, "MEM", format!("{:>5.1}%", self.mem_usage), 60.0);
-                // 文字化け対策: ↑ -> ^, ↓ -> v
-                label_style(ui, "NET", format!("{:>6}^ / {:>6}v", Self::format_bytes(self.net_up), Self::format_bytes(self.net_down)), 140.0);
-                label_style(ui, "DISK", format!("{:>4}GB/{:>4}GB", self.disk_used, self.disk_total), 110.0);
-                label_style(ui, "IO", format!("{:>6}R / {:>6}W", Self::format_bytes(self.disk_read), Self::format_bytes(self.disk_write)), 140.0);
-                
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if ui.button("×").clicked() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                ui.horizontal(|ui| {
+                    // ドラッグ移動の有効化 (文字化け対策: ☷ -> =)
+                    let drag_label = ui.label(
+                        egui::RichText::new("=")
+                            .size(14.0)
+                            .color(egui::Color32::from_gray(100)),
+                    );
+                    if drag_label.interact(egui::Sense::drag()).dragged() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
                     }
 
-                    let now = chrono::Local::now();
-                    let time_str = now.format("%Y/%m/%d(%a) %H:%M:%S").to_string();
-                    
-                    // 時計表示 (点滅なし、固定幅)
-                    ui.add_sized([180.0, 12.0], egui::Label::new(
-                        egui::RichText::new(time_str)
-                            .strong()
-                            .size(12.0)
-                            .color(egui::Color32::from_rgba_unmultiplied(255, 255, 255, 230))
-                    ));
-                    
-                    ui.add_space(10.0);
+                    ui.spacing_mut().item_spacing.x = 15.0;
+
+                    let label_style = |ui: &mut egui::Ui, name: &str, val: String, width: f32| {
+                        ui.horizontal(|ui| {
+                            ui.spacing_mut().item_spacing.x = 4.0;
+                            ui.label(
+                                egui::RichText::new(name)
+                                    .size(10.0)
+                                    .color(egui::Color32::from_gray(120)),
+                            );
+                            ui.add_sized(
+                                [width, 12.0],
+                                egui::Label::new(
+                                    egui::RichText::new(val)
+                                        .strong()
+                                        .size(12.0)
+                                        .color(egui::Color32::WHITE),
+                                )
+                                .selectable(false),
+                            );
+                        });
+                    };
+
+                    // 各項目の幅を固定してガタつきを防止
+                    let temp_str = if self.cpu_temp > 0.0 {
+                        format!("{:>2.0}°C", self.cpu_temp)
+                    } else {
+                        "--°C".to_string()
+                    };
+                    label_style(
+                        ui,
+                        "CPU",
+                        format!("{:>5.1}% ({})", self.cpu_usage, temp_str),
+                        100.0,
+                    );
+                    label_style(ui, "MEM", format!("{:>5.1}%", self.mem_usage), 60.0);
+                    // 文字化け対策: ↑ -> ^, ↓ -> v
+                    label_style(
+                        ui,
+                        "NET",
+                        format!(
+                            "{:>6}^ / {:>6}v",
+                            Self::format_bytes(self.net_up),
+                            Self::format_bytes(self.net_down)
+                        ),
+                        140.0,
+                    );
+                    label_style(
+                        ui,
+                        "DISK",
+                        format!("{:>4}GB/{:>4}GB", self.disk_used, self.disk_total),
+                        110.0,
+                    );
+                    label_style(
+                        ui,
+                        "IO",
+                        format!(
+                            "{:>6}R / {:>6}W",
+                            Self::format_bytes(self.disk_read),
+                            Self::format_bytes(self.disk_write)
+                        ),
+                        140.0,
+                    );
+
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if ui.button("×").clicked() {
+                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+
+                        let now = chrono::Local::now();
+                        let time_str = now.format("%Y/%m/%d(%a) %H:%M:%S").to_string();
+
+                        // 時計表示 (点滅なし、固定幅)
+                        ui.add_sized(
+                            [180.0, 12.0],
+                            egui::Label::new(
+                                egui::RichText::new(time_str).strong().size(12.0).color(
+                                    egui::Color32::from_rgba_unmultiplied(255, 255, 255, 230),
+                                ),
+                            ),
+                        );
+
+                        ui.add_space(10.0);
+                    });
                 });
             });
-        });
 
         ctx.request_repaint_after(Duration::from_secs(1));
     }
@@ -279,16 +324,16 @@ fn main() -> eframe::Result<()> {
 
     // 初期設定の読み込み（位置復元のため）
     let storage_name = eframe::APP_KEY;
-    
+
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1100.0, 32.0])
             .with_min_inner_size([1100.0, 32.0]) // 最小サイズを固定
             .with_max_inner_size([1100.0, 32.0]) // 最大サイズを固定
-            .with_resizable(false)               // リサイズ禁止
+            .with_resizable(false) // リサイズ禁止
             .with_decorations(false) // タイトルバー非表示
-            .with_transparent(true)  // 背景透過
-            .with_always_on_top(),   // 最前面
+            .with_transparent(true) // 背景透過
+            .with_always_on_top(), // 最前面
         ..Default::default()
     };
 
@@ -297,17 +342,20 @@ fn main() -> eframe::Result<()> {
         options,
         Box::new(|cc| {
             // 保存された位置がある場合は適用 (eframe::get_value -> cc.storage.get_string)
-            let config: Config = cc.storage
+            let config: Config = cc
+                .storage
                 .and_then(|s| s.get_string(storage_name))
                 .and_then(|json| serde_json::from_str(&json).ok())
                 .unwrap_or_default();
-            
+
             if let Some(pos) = config.pos {
-                cc.egui_ctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos));
+                cc.egui_ctx
+                    .send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos));
                 // サイズが勝手に変わらないよう、起動時にもサイズを強制
-                cc.egui_ctx.send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(1100.0, 32.0)));
+                cc.egui_ctx
+                    .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(1100.0, 32.0)));
             }
-            
+
             Box::new(SystemMonitor::new(cc))
         }),
     )
@@ -351,5 +399,29 @@ mod windows_util {
 mod windows_util {
     pub fn is_already_running() -> bool {
         false
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_config_default() {
+        let config = Config::default();
+        assert!(config.pos.is_none());
+    }
+
+    #[test]
+    fn test_format_bytes() {
+        assert_eq!(SystemMonitor::format_bytes(0), "0B");
+        assert_eq!(SystemMonitor::format_bytes(512), "512B");
+        assert_eq!(SystemMonitor::format_bytes(1023), "1023B");
+        assert_eq!(SystemMonitor::format_bytes(1024), "1.0K");
+        assert_eq!(SystemMonitor::format_bytes(1536), "1.5K");
+        assert_eq!(SystemMonitor::format_bytes(1048576), "1.0M");
+        assert_eq!(SystemMonitor::format_bytes(1572864), "1.5M");
+        assert_eq!(SystemMonitor::format_bytes(1073741824), "1.0G");
+        assert_eq!(SystemMonitor::format_bytes(2147483648), "2.0G");
     }
 }

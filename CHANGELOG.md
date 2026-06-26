@@ -1,5 +1,23 @@
 # Changelog
 
+## [2026-06-26]
+### Added
+- **CI (GitHub Actions) 設定の追加:** `ubuntu-latest`, `macos-latest`, `windows-latest` 上で Rust プロジェクトの自動ビルド、テスト、フォーマットチェック（`cargo fmt`）、Lintチェック（`cargo clippy`）を実行する CI ワークフローを追加しました。
+- **CIステータスバッジの追加:** `README.md` および `README.ja.md` に GitHub Actions の CI ステータスバッジを追加しました。
+- **ユニットテストの追加:** `src/main.rs` にユニットテストモジュールを追加し、バイト数フォーマットロジック（`format_bytes`）および設定のデフォルト値（`Config::default`）の自動検証を可能にしました。
+- **Dependabotの導入:** 依存ライブラリ（Cargo）およびGitHub Actionsの自動更新PR作成ツールである Dependabot を設定しました。
+- **自動リリースワークフローの追加:** 新しいバージョンタグ（`v*`）プッシュ時に、最適化されたWindows版実行バイナリ（`mini-system-monitor.exe`）を自動ビルドし、GitHub Releaseのドラフトとして自動登録するワークフローを設定しました。
+- **EditorConfigの追加:** さまざまなエディタ環境でインデントや改行コードなどの基本スタイルを統一するための `.editorconfig` ファイルを追加しました。
+- **自動バージョンアップ（バンプ）ワークフローの追加:** `main` ブランチへのプッシュ（PRマージ）時に自動でパッチバージョンをインクリメントし、Gitタグを作成してプッシュする GitHub Actions ワークフローを追加しました。これに伴い、自動的にリリースドラフトの作成までが連動するようになります。
+
+
+
+### Fixed
+- **Clippy警告の修正:** `src/main.rs` の `Config` 構造体における `Default` トレイトの手動実装を `#[derive(Default)]` に置き換え、`clippy::derivable_impls` 警告を解消しました。
+
+### Optimized
+- **コードフォーマットの整形:** `cargo fmt` を実行し、ソースコード全体のレイアウトとフォーマットを整形しました。
+
 ## [2026-06-25]
 ### Added
 - **自動ドキュメント作成・更新ルールの追加:** AIエージェント用の個別指示書 `.agents/AGENTS.md` を新規作成。コード変更時に `CHANGELOG.md` や `SPEC.md` などの関連ドキュメントを自動で走査・更新するプロセスを規定しました。
