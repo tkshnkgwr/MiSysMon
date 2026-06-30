@@ -6,6 +6,7 @@
 ![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)
 [![CI](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml)
+[![Latest Release](https://img.shields.io/github/v/release/tkshnkgwr/MiSysMon?logo=github)](https://github.com/tkshnkgwr/MiSysMon/releases)
 
 
 An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resource environments (such as lower-spec Windows PCs).

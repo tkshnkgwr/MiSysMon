@@ -1,5 +1,13 @@
 # Changelog
 
+## [2026-06-30]
+### Added
+- **最新リリースバッジの追加:** `README.md` および `README.ja.md` に GitHub の最新リリース（Latest Release）バッジを追加しました。
+- **AI指示書の更新 (AGENTS.md):** `README.md` / `README.ja.md` の多言語相互リンクおよび各種ステータスバッジの維持・追加ルールを `.agents/AGENTS.md` に追加しました。
+
+### Optimized
+- **Rust環境アップグレードに伴う動作確認と検証:** ローカルのRustバージョンが `1.96.0` に上がったことに伴い、プロジェクト全体の動作確認を実施しました。`cargo test`、`cargo clippy`、`cargo fmt` を実行し、コードのビルド、テスト、静的解析、フォーマットチェックがすべて警告・エラーなしで正常に完了することを確認しました。
+
 ## [2026-06-26]
 ### Added
 - **CI (GitHub Actions) 設定の追加:** `ubuntu-latest`, `macos-latest`, `windows-latest` 上で Rust プロジェクトの自動ビルド、テスト、フォーマットチェック（`cargo fmt`）、Lintチェック（`cargo clippy`）を実行する CI ワークフローを追加しました。
