@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026-07-06]
+### Fixed
+- **GitHub Actions ワークフローの正常化:**
+  - `actions/checkout` を非推奨・未定義の `v7` から安定版の `v4` へ、および `softprops/action-gh-release` を `v3` から `v2` へ戻しました。
+  - 同一アカウント内の共通ライブラリ `common_lib` への依存パス（`../common_lib`）を解決するため、ワークフロー実行時に `MiSysMon` と並行して `common_lib` リポジトリをクローンする設定を追加しました。
+  - すべてのジョブでデフォルトの作業ディレクトリを `MiSysMon` に指定し、アセットパスを修正しました。
+
+## [2026-07-03]
+### Fixed
+- **Cargo.toml パスバグ修正:** 共有ライブラリ `common_lib` への参照パスが誤って `../../common_lib` になっていた問題を、実際のディレクトリ配置に合わせ `../common_lib` へ修正しました。
+
+### Optimized
+- **共有ライブラリ統合によるコードクリーンアップ:** `main.rs` 内にあった Windows API (`kernel32` 等) の生 FFI `unsafe` コードをすべて削除し、プロジェクト間共有ライブラリである `common_lib` の二重起動防止ロジック (`desktop::acquire_single_instance`) を利用するように移行しました。
+
 ## [2026-06-30]
 ### Added
 - **最新リリースバッジの追加:** `README.md` および `README.ja.md` に GitHub の最新リリース（Latest Release）バッジを追加しました。

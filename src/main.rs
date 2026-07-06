@@ -322,9 +322,12 @@ impl eframe::App for SystemMonitor {
 }
 
 fn main() -> eframe::Result<()> {
-    if windows_util::is_already_running() {
-        return Ok(());
-    }
+    let _guard = match common_lib::desktop::acquire_single_instance(
+        "Local\\mini-system-monitor-single-instance-key",
+    ) {
+        Some(guard) => guard,
+        None => return Ok(()),
+    };
 
     // 初期設定の読み込み（位置復元のため）
     let storage_name = eframe::APP_KEY;
@@ -363,47 +366,6 @@ fn main() -> eframe::Result<()> {
             Ok(Box::new(SystemMonitor::new(cc)))
         }),
     )
-}
-
-#[cfg(target_os = "windows")]
-mod windows_util {
-    #[link(name = "kernel32")]
-    extern "system" {
-        fn CreateMutexW(
-            lpMutexAttributes: *mut std::ffi::c_void,
-            bInitialOwner: i32,
-            lpName: *const u16,
-        ) -> *mut std::ffi::c_void;
-        fn GetLastError() -> u32;
-        fn CloseHandle(hObject: *mut std::ffi::c_void) -> i32;
-    }
-
-    const ERROR_ALREADY_EXISTS: u32 = 183;
-
-    pub fn is_already_running() -> bool {
-        let name = "Local\\mini-system-monitor-single-instance-key\0";
-        let name_utf16: Vec<u16> = name.encode_utf16().collect();
-        unsafe {
-            let handle = CreateMutexW(std::ptr::null_mut(), 1, name_utf16.as_ptr());
-            if handle.is_null() {
-                return false;
-            }
-            if GetLastError() == ERROR_ALREADY_EXISTS {
-                CloseHandle(handle);
-                return true;
-            }
-            // ハンドルはクローズせず、プログラム終了まで保持することでミューテックスを維持します。
-            // プロセス終了時に OS によって自動解放されます。
-        }
-        false
-    }
-}
-
-#[cfg(not(target_os = "windows"))]
-mod windows_util {
-    pub fn is_already_running() -> bool {
-        false
-    }
 }
 
 #[cfg(test)]

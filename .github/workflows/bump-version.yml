@@ -8,16 +8,26 @@ on:
 jobs:
   bump:
     name: Bump Version & Tag
-    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: MiSysMon
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     permissions:
       contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
+      - name: Checkout MiSysMon
+        uses: actions/checkout@v4
         with:
+          path: MiSysMon
           fetch-depth: 0
+
+      - name: Checkout common_lib
+        uses: actions/checkout@v4
+        with:
+          repository: tkshnkgwr/common_lib
+          path: common_lib
+          token: ${{ secrets.PAT }}
 
       - name: Calculate new version
         id: calculate_version
