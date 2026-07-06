@@ -6,6 +6,8 @@
   - `actions/checkout` を非推奨・未定義の `v7` から安定版の `v4` へ、および `softprops/action-gh-release` を `v3` から `v2` へ戻しました。
   - 同一アカウント内の共通ライブラリ `common_lib` への依存パス（`../common_lib`）を解決するため、ワークフロー実行時に `MiSysMon` と並行して `common_lib` リポジトリをクローンする設定を追加しました。また、`secrets.PAT` が未設定の環境でもエラーにならないよう、`github.token` へのフォールバック処理を実装しました。
   - すべてのジョブでデフォルトの作業ディレクトリを `MiSysMon` に指定し、アセットパスを修正しました。
+- **AI指示書の更新 (AGENTS.md):**
+  - 今後AIがワークフロー定義を編集する際に `common_lib` への依存関係を破壊しないよう、`.agents/AGENTS.md` 内にGitHub Actionsにおける共有ライブラリ依存維持のルールを追記しました。
 
 ## [2026-07-03]
 ### Fixed

@@ -55,6 +55,9 @@ AIがソースコードを変更した際、あるいはタスクを完了する
     3. `cargo fmt --check` （コードフォーマットの完全準拠）
 - **CI/CD設定および環境設定ファイルの保護**:
   - `.github/workflows/` 下のワークフロー定義、`.github/dependabot.yml`、`.editorconfig` などの設定ファイルを変更した場合は、必ずその変更内容と理由を `CHANGELOG.md` に記録すること。
+- **GitHub Actions における共有ライブラリ依存の維持**:
+  - 本プロジェクトは同一オーナーの `common_lib`（`../common_lib`）に相対パスで依存しているため、GitHub Actionsのワークフロー定義では、必ず `MiSysMon` と並行して `common_lib` リポジトリをチェックアウトする構成（`token: ${{ secrets.PAT || github.token }}` によるフォールバック付き）を維持すること。
+  - すべてのジョブでデフォルト作業ディレクトリ（`working-directory: MiSysMon`）を設定し、リリースアセットパスなどの整合性を損なわないように注意すること。
 
 ## 4. 開発および実行手順
 1. **コード変更の検知**: コードの追加・変更・削除を伴うタスクの完了時に、影響を受ける範囲を特定する。
