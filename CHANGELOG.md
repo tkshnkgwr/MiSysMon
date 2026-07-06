@@ -4,7 +4,7 @@
 ### Fixed
 - **GitHub Actions ワークフローの正常化:**
   - `actions/checkout` を非推奨・未定義の `v7` から安定版の `v4` へ、および `softprops/action-gh-release` を `v3` から `v2` へ戻しました。
-  - 同一アカウント内の共通ライブラリ `common_lib` への依存パス（`../common_lib`）を解決するため、ワークフロー実行時に `MiSysMon` と並行して `common_lib` リポジトリをクローンする設定を追加しました。
+  - 同一アカウント内の共通ライブラリ `common_lib` への依存パス（`../common_lib`）を解決するため、ワークフロー実行時に `MiSysMon` と並行して `common_lib` リポジトリをクローンする設定を追加しました。また、`secrets.PAT` が未設定の環境でもエラーにならないよう、`github.token` へのフォールバック処理を実装しました。
   - すべてのジョブでデフォルトの作業ディレクトリを `MiSysMon` に指定し、アセットパスを修正しました。
 
 ## [2026-07-03]

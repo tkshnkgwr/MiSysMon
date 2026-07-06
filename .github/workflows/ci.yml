@@ -32,7 +32,7 @@ jobs:
         with:
           repository: tkshnkgwr/common_lib
           path: common_lib
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT || github.token }}
 
       - name: Install dependencies (Ubuntu only)
         if: matrix.os == 'ubuntu-latest'

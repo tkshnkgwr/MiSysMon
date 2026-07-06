@@ -26,7 +26,7 @@ jobs:
         with:
           repository: tkshnkgwr/common_lib
           path: common_lib
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT || github.token }}
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
