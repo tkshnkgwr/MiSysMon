@@ -8,6 +8,7 @@ on:
 jobs:
   bump:
     name: Bump Version & Tag
+    runs-on: windows-latest
     defaults:
       run:
         working-directory: MiSysMon

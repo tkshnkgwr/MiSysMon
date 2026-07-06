@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     name: Create Draft Release
+    runs-on: windows-latest
     defaults:
       run:
         working-directory: MiSysMon
