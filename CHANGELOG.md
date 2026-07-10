@@ -9,6 +9,10 @@
 - **各種READMEに内部ドキュメントへのリンクを追加:**
   `README.md` および `README.ja.md` に新設した上記2ファイルの解説とリンクを追記しました。
 
+### Optimized
+- **共通ユーティリティ関数の移行:**
+  数値フォーマット処理 `format_bytes` を共通ライブラリ `common_lib` の `src/text.rs` に移行し、`main.rs` 内の重複コードおよびテストを削除しました。
+
 ## [2026-07-06]
 ### Fixed
 - **GitHub Actions ワークフローの正常化:**

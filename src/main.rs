@@ -171,18 +171,6 @@ impl SystemMonitor {
         self.disk_used = (d_total - d_available) / 1024 / 1024 / 1024; // GB
         self.disk_total = d_total / 1024 / 1024 / 1024; // GB
     }
-
-    fn format_bytes(bytes: u64) -> String {
-        if bytes < 1024 {
-            format!("{}B", bytes)
-        } else if bytes < 1024 * 1024 {
-            format!("{:.1}K", bytes as f32 / 1024.0)
-        } else if bytes < 1024 * 1024 * 1024 {
-            format!("{:.1}M", bytes as f32 / 1024.0 / 1024.0)
-        } else {
-            format!("{:.1}G", bytes as f32 / 1024.0 / 1024.0 / 1024.0)
-        }
-    }
 }
 
 impl eframe::App for SystemMonitor {
@@ -271,8 +259,8 @@ impl eframe::App for SystemMonitor {
                         "NET",
                         format!(
                             "{:>6}^ / {:>6}v",
-                            Self::format_bytes(self.net_up),
-                            Self::format_bytes(self.net_down)
+                            common_lib::format_bytes(self.net_up),
+                            common_lib::format_bytes(self.net_down)
                         ),
                         140.0,
                     );
@@ -287,8 +275,8 @@ impl eframe::App for SystemMonitor {
                         "IO",
                         format!(
                             "{:>6}R / {:>6}W",
-                            Self::format_bytes(self.disk_read),
-                            Self::format_bytes(self.disk_write)
+                            common_lib::format_bytes(self.disk_read),
+                            common_lib::format_bytes(self.disk_write)
                         ),
                         140.0,
                     );
@@ -376,18 +364,5 @@ mod tests {
     fn test_config_default() {
         let config = Config::default();
         assert!(config.pos.is_none());
-    }
-
-    #[test]
-    fn test_format_bytes() {
-        assert_eq!(SystemMonitor::format_bytes(0), "0B");
-        assert_eq!(SystemMonitor::format_bytes(512), "512B");
-        assert_eq!(SystemMonitor::format_bytes(1023), "1023B");
-        assert_eq!(SystemMonitor::format_bytes(1024), "1.0K");
-        assert_eq!(SystemMonitor::format_bytes(1536), "1.5K");
-        assert_eq!(SystemMonitor::format_bytes(1048576), "1.0M");
-        assert_eq!(SystemMonitor::format_bytes(1572864), "1.5M");
-        assert_eq!(SystemMonitor::format_bytes(1073741824), "1.0G");
-        assert_eq!(SystemMonitor::format_bytes(2147483648), "2.0G");
     }
 }
