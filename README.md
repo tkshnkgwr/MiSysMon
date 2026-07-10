@@ -79,5 +79,10 @@ Window location and other application states are persisted in:
 2. Delete the `app.ron` file (or the entire `Mini System Monitor` folder).
 3. Relaunch the application. It will open in the default position and size, generating a fresh config file.
 
+## 📚 Internal Documentation
+For developers or advanced administrators, check out the following internal guides:
+- [Multi-Repository Development Guide](./docs/DEVELOPMENT.md): Learn how to set up the workspace alongside `common_lib`.
+- [Release & Versioning Flow Guide](./docs/RELEASE_FLOW.md): Understand the GitHub Actions release workflow and PAT setup.
+
 ## 📄 License
 MIT License (Refer to the [LICENSE](./LICENSE) file for details)
