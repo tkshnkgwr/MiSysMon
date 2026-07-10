@@ -1,6 +1,6 @@
 # Test Report
 
-**適合バージョン**: mini-system-monitor v0.1.10
+**適合バージョン**: mini-system-monitor v0.1.11
 
 ## 1. テスト環境
 - **OS:** Web Container (Simulated Windows Environment)
