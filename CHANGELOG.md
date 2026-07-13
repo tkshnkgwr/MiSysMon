@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026-07-13]
+### Added
+- **AI指示書の更新 (AGENTS.md) / Markdown変更時の自動ドキュメント生成除外:**
+  Markdownファイル（`.md`）のみの変更・修正時には、自動ドキュメント生成や更新処理（CHANGELOG等）をスキップするルールを追記しました。また、Markdownのみの変更時はGitHub ActionsのCIがトリガーされないようになった旨も追記しました。
+
+### Optimized
+- **GitHub Actions ワークフローの効率化 (ci.yml / bump-version.yml):**
+  Markdownファイル（`**.md`）のみのコミット時には、不要なビルド・テストおよび自動バージョンアップを防ぐため、`paths-ignore: '**.md'` を追加してCIトリガーを制御するように変更しました。
+
 ## [2026-07-10]
 ### Added
 - **`docs/RELEASE_FLOW.md` (リリース手順書) の追加:**
