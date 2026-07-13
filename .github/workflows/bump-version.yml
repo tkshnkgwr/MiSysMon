@@ -18,13 +18,13 @@ jobs:
 
     steps:
       - name: Checkout MiSysMon
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: MiSysMon
           fetch-depth: 0
 
       - name: Checkout common_lib
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: tkshnkgwr/common_lib
           path: common_lib
