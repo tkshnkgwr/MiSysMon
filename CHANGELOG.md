@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-07-14]
+### Added
+- **Rustdoc コメントの追加:**
+  `src/main.rs` 内のすべての構造体（`Config`, `SystemMonitor`）、フィールド、メソッド（`new`, `update_stats`, `save`, `ui`）、および `main` 関数に対し、仕様を説明する Rustdoc コメント（`///` および `//!`）を追加しました。
+- **AI指示書の更新 (AGENTS.md):**
+  プログラムの仕様変更時に Rustdoc コメントも追従して更新することを規定するルール、およびローカル事前検証プロセスに `cargo doc` によるエラー/警告チェック（`cargo doc --no-deps --document-private-items`）を追加しました。
+
 ## [2026-07-13]
 ### Added
 - **AI指示書の更新 (AGENTS.md) / Markdown変更時の自動ドキュメント生成除外:**

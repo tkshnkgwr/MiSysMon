@@ -1,5 +1,12 @@
 #![windows_subsystem = "windows"]
 
+//! # ミニシステムモニター (mini-system-monitor)
+//!
+//! Windows環境向けの軽量なシステムモニターアプリケーション。
+//! egui および eframe を使用したデスクトップ常駐型の UI を提供し、
+//! CPU使用率・温度、メモリ使用率、ネットワークトラフィック、ディスク使用量とIO、
+//! 現在の時刻などのシステムメトリクスをリアルタイムで表示します。
+
 use eframe::egui;
 use serde::{Deserialize, Serialize};
 use std::time::{Duration, Instant};
@@ -7,32 +14,61 @@ use sysinfo::{Components, Disks, Networks, System};
 
 // UPDATE 2026-04-16: ウィンドウ位置の保存機能の追加と、表示切替機能の削除。
 
+/// アプリケーションの設定情報を保持する構造体。
+///
+/// ウィンドウの位置など、次回起動時に復元したい情報をシリアライズするために使用されます。
 #[derive(Serialize, Deserialize, Default)]
 struct Config {
+    /// 終了時のウィンドウの左上座標（スクリーン座標系）。
     pos: Option<egui::Pos2>,
 }
 
+/// システムモニターの本体となるアプリケーション状態管理構造体。
+///
+/// 各種システムメトリクスの現在値や、前回の更新時刻、
+/// `sysinfo` クレートのシステムハンドラなどを管理します。
 struct SystemMonitor {
+    /// システム全体の情報を取得・管理するための `sysinfo::System` インスタンス。
     sys: System,
+    /// ネットワークインターフェースの情報を取得するための `sysinfo::Networks` インスタンス。
     networks: Networks,
+    /// ディスクの情報を取得するための `sysinfo::Disks` インスタンス。
     disks: Disks,
+    /// 温度センサーなどのコンポーネント情報を取得するための `sysinfo::Components` インスタンス。
     components: Components,
+    /// 前回メトリクスを更新した時刻。1秒ごとの更新制御に使用します。
     last_update: Instant,
+    /// 現在のCPU使用率 (0.0%〜100.0%)。
     cpu_usage: f32,
+    /// 現在のCPU温度 (℃)。
     cpu_temp: f32,
+    /// 現在のメモリ使用率 (0.0%〜100.0%)。
     mem_usage: f64,
+    /// 前回の更新からの送信バイト数 (アップロード速度計算用)。
     net_up: u64,
+    /// 前回の更新からの受信バイト数 (ダウンロード速度計算用)。
     net_down: u64,
+    /// ディスク読み込み速度 (バイト/秒)。
     disk_read: u64,
+    /// ディスク書き込み速度 (バイト/秒)。
     disk_write: u64,
+    /// 前回の測定時の累積送信バイト数。
     prev_net_up: u64,
+    /// 前回の測定時の累積受信バイト数。
     prev_net_down: u64,
+    /// システムのディスク使用量合計 (GB)。
     disk_used: u64,
+    /// システムの全ディスクの容量合計 (GB)。
     disk_total: u64,
+    /// 保存・復元されるアプリケーション設定。
     config: Config,
 }
 
 impl SystemMonitor {
+    /// 新しい `SystemMonitor` インスタンスを生成します。
+    ///
+    /// eframe の初期化コンテキストを受け取り、保存されたウィンドウ位置設定を読み込みます。
+    /// また、検出された温度センサー情報をデバッグ用にファイル (`sensors_debug.log`) に出力します。
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
         let mut sys = System::new();
         sys.refresh_cpu_all();
@@ -88,6 +124,10 @@ impl SystemMonitor {
         }
     }
 
+    /// 各種システムメトリクスを更新します。
+    ///
+    /// CPU使用率・温度、メモリ使用率、ネットワークトラフィックの差分、
+    /// ディスクIO速度およびディスク使用量を再計測して構造体のフィールドに格納します。
     fn update_stats(&mut self) {
         self.sys.refresh_cpu_all();
         self.sys.refresh_memory();
@@ -174,13 +214,17 @@ impl SystemMonitor {
 }
 
 impl eframe::App for SystemMonitor {
-    // 終了時に設定を保存 (eframe::set_value -> storage.set_string)
+    /// アプリケーション終了時に設定情報を永続化ストレージに保存します。
     fn save(&mut self, storage: &mut dyn eframe::Storage) {
         if let Ok(json) = serde_json::to_string(&self.config) {
             storage.set_string(eframe::APP_KEY, json);
         }
     }
 
+    /// UIの描画および更新ロジックを定義します。
+    ///
+    /// 1秒ごとにメトリクス情報の更新を行うほか、ウィンドウのドラッグ移動処理、
+    /// 各項目のレイアウト、終了ボタンの制御、時計の表示を行います。
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         // 現在のウィンドウ位置を監視して保存用に更新 (outer_rect.min -> position)
         ui.input(|i| {
@@ -309,6 +353,10 @@ impl eframe::App for SystemMonitor {
     }
 }
 
+/// アプリケーションのエントリーポイント。
+///
+/// 単一インスタンスの起動制御、ウィンドウの初期オプション（サイズ、リサイズ禁止、枠なし、常に最前面など）の設定、
+/// および `eframe::run_native` による UI イベントループの起動を行います。
 fn main() -> eframe::Result<()> {
     let _guard = match common_lib::desktop::acquire_single_instance(
         "Local\\mini-system-monitor-single-instance-key",
