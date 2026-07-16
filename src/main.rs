@@ -14,6 +14,36 @@ use sysinfo::{Components, Disks, Networks, System};
 
 // UPDATE 2026-04-16: ウィンドウ位置の保存機能の追加と、表示切替機能の削除。
 
+#[cfg(target_os = "windows")]
+#[allow(clippy::upper_case_acronyms)]
+mod win32 {
+    use std::ffi::c_void;
+
+    // HMONITOR はハンドル（ポインタ）型
+    type HMONITOR = *mut c_void;
+
+    #[repr(C)]
+    struct POINT {
+        x: i32,
+        y: i32,
+    }
+
+    const MONITOR_DEFAULTTONULL: u32 = 0;
+
+    extern "system" {
+        fn MonitorFromPoint(pt: POINT, dw_flags: u32) -> HMONITOR;
+    }
+
+    /// 指定したスクリーン座標 (x, y) が現在接続されているいずれかのモニターの表示領域内にあるかチェックします。
+    pub fn is_position_on_any_monitor(x: i32, y: i32) -> bool {
+        unsafe {
+            let pt = POINT { x, y };
+            let h_monitor = MonitorFromPoint(pt, MONITOR_DEFAULTTONULL);
+            !h_monitor.is_null()
+        }
+    }
+}
+
 /// アプリケーションの設定情報を保持する構造体。
 ///
 /// ウィンドウの位置など、次回起動時に復元したい情報をシリアライズするために使用されます。
@@ -21,6 +51,30 @@ use sysinfo::{Components, Disks, Networks, System};
 struct Config {
     /// 終了時のウィンドウの左上座標（スクリーン座標系）。
     pos: Option<egui::Pos2>,
+}
+
+/// 指定されたディレクトリ内の指定されたログファイルをローテーションします。
+///
+/// 最大 `max_backups` 個の過去ログファイルを保持します。
+fn rotate_logs(dir: &std::path::Path, base_name: &str, max_backups: usize) {
+    let oldest_path = dir.join(format!("{}.{}", base_name, max_backups));
+    if oldest_path.exists() {
+        let _ = std::fs::remove_file(oldest_path);
+    }
+
+    for i in (1..max_backups).rev() {
+        let src = dir.join(format!("{}.{}", base_name, i));
+        let dest = dir.join(format!("{}.{}", base_name, i + 1));
+        if src.exists() {
+            let _ = std::fs::rename(src, dest);
+        }
+    }
+
+    let current_log = dir.join(base_name);
+    let first_backup = dir.join(format!("{}.1", base_name));
+    if current_log.exists() {
+        let _ = std::fs::rename(current_log, first_backup);
+    }
 }
 
 /// システムモニターの本体となるアプリケーション状態管理構造体。
@@ -76,18 +130,27 @@ impl SystemMonitor {
 
         let components = Components::new_with_refreshed_list();
 
-        // DEBUG: センサー情報をファイルに出力（診断用）
-        let mut log_path = if let Ok(appdata) = std::env::var("APPDATA") {
+        // ログ出力先ディレクトリの決定
+        let log_dir = if let Ok(appdata) = std::env::var("APPDATA") {
             std::path::PathBuf::from(appdata).join("Mini System Monitor")
         } else {
             std::path::PathBuf::from(".")
         };
-        let _ = std::fs::create_dir_all(&log_path);
-        log_path.push("sensors_debug.log");
+        let _ = std::fs::create_dir_all(&log_dir);
 
+        // ログファイルの簡易ローテーション実行（最大3バックアップ）
+        rotate_logs(&log_dir, "sensors_debug.log", 3);
+
+        let log_path = log_dir.join("sensors_debug.log");
         if let Ok(mut file) = std::fs::File::create(log_path) {
             use std::io::Write;
             let _ = writeln!(file, "Detected Sensors Count: {}", components.len());
+            if components.is_empty() {
+                let _ = writeln!(
+                    file,
+                    "Note: If zero sensors are detected, you may need to run this application as Administrator to access CPU temperature sensors on Windows."
+                );
+            }
             for c in &components {
                 let temp_str = c
                     .temperature()
@@ -103,11 +166,20 @@ impl SystemMonitor {
             .and_then(|json| serde_json::from_str(&json).ok())
             .unwrap_or_default();
 
+        let networks = Networks::new_with_refreshed_list();
+        // 初回の受信/送信バイト数を蓄積して prev_net_up / prev_net_down の初期値とする
+        let mut prev_net_up = 0;
+        let mut prev_net_down = 0;
+        for (_, data) in &networks {
+            prev_net_up += data.transmitted();
+            prev_net_down += data.received();
+        }
+
         Self {
             sys,
-            networks: Networks::new_with_refreshed_list(),
+            networks,
             disks: Disks::new_with_refreshed_list(),
-            components, // 既に作成済みのインスタンスを使用
+            components,
             last_update: Instant::now(),
             cpu_usage: 0.0,
             cpu_temp: 0.0,
@@ -116,8 +188,8 @@ impl SystemMonitor {
             net_down: 0,
             disk_read: 0,
             disk_write: 0,
-            prev_net_up: 0,
-            prev_net_down: 0,
+            prev_net_up,
+            prev_net_down,
             disk_used: 0,
             disk_total: 0,
             config,
@@ -392,11 +464,21 @@ fn main() -> eframe::Result<()> {
                 .unwrap_or_default();
 
             if let Some(pos) = config.pos {
-                cc.egui_ctx
-                    .send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos));
-                // サイズが勝手に変わらないよう、起動時にもサイズを強制
-                cc.egui_ctx
-                    .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(1100.0, 32.0)));
+                // ウィンドウ位置が有効なモニターの表示範囲内にあるか検証
+                #[cfg(target_os = "windows")]
+                let is_valid = win32::is_position_on_any_monitor(pos.x as i32, pos.y as i32);
+                #[cfg(not(target_os = "windows"))]
+                let is_valid = true;
+
+                if is_valid {
+                    cc.egui_ctx
+                        .send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos));
+                    // サイズが勝手に変わらないよう、起動時にもサイズを強制
+                    cc.egui_ctx
+                        .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
+                            1100.0, 32.0,
+                        )));
+                }
             }
 
             Ok(Box::new(SystemMonitor::new(cc)))
