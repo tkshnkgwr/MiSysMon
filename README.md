@@ -1,6 +1,6 @@
 # MiSysMon (Mini System Monitor - Rust Edition)
 
-📖 [日本語版はこちら (Japanese Version)](./README.ja.md)
+📖 [日本語版はこちら (Japanese Version)](./README_JA.md)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
