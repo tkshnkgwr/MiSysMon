@@ -80,6 +80,7 @@ AIがソースコードを変更した際、あるいはタスクを完了する
     2. `cargo clippy --all-targets -- -D warnings` （Clippyの警告・エラーゼロ）
     3. `cargo fmt --check` （コードフォーマットの完全準拠）
     4. `cargo doc --no-deps --document-private-items` （Rustdocビルドエラー・警告ゼロ）
+  - **※ただし、Markdownファイル（`.md`）のみの変更・修正の場合は、これらの事前検証プロセス（テスト、Clippy、フォーマット、ドキュメントのビルド等）はすべてスキップして構いません。**
 - **CI/CD設定および環境設定ファイルの保護**:
   - `.github/workflows/` 下のワークフロー定義、`.github/dependabot.yml`、`.editorconfig` などの設定ファイルを変更した場合は、必ずその変更内容と理由を `CHANGELOG.md` に記録すること。
 - **GitHub Actions における共有ライブラリ依存の維持**:
