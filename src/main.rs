@@ -538,6 +538,7 @@ impl eframe::App for SystemMonitor {
                         let delta = drag_label.drag_delta();
                         if delta != egui::Vec2::ZERO {
                             if let Some(pos) = self.config.pos {
+                                #[allow(unused_mut)]
                                 let mut new_pos = pos + delta;
 
                                 #[cfg(target_os = "windows")]

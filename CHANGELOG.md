@@ -10,6 +10,7 @@
 
 ### Fixed
 - **GitHub Actions ワークフローの修正 (ci.yml / release.yml)**: 未定義の `actions/checkout@v7` および `softprops/action-gh-release@v3` に起因して発生していた GitHub Actions 実行エラーを修正するため、安定版の `checkout@v4` および `action-gh-release@v2` へバージョンを適正化。
+- **クロスプラットフォームコンパイル（Clippy）エラーの修正**: Windows以外のターゲット（Linux/macOS）でコンパイルした際、吸着処理用の移動座標変数 `new_pos` が `unused_mut` 警告（エラー扱い）を引き起こしていた不具合に対し、`#[allow(unused_mut)]` を追加してビルドが成功するように修正。
 
 ### Removed
 - **自動バージョンバンプ機能の廃止**: GitHubでの不要な自動コミットやコンフリクトを回避するため、`Auto Bump Version` ワークフロー (`bump-version.yml`) を削除し、開発者が手動でバージョンバンプおよびタグ管理を行う運用に変更。
