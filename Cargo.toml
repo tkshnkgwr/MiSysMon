@@ -1,6 +1,6 @@
 [package]
 name = "mini-system-monitor"
-version = "0.1.16"
+version = "1.0.0"
 edition = "2021"
 
 [dependencies]
@@ -18,4 +18,3 @@ lto = true          # リンク時最適化
 codegen-units = 1   # コンパイル単位を1にして最適化を最大化
 panic = 'abort'     # パニック時の巻き戻しを無効化して軽量化
 strip = true        # シンボル情報を削除（サイズ大幅削減）
-
