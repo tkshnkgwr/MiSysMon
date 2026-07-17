@@ -27,12 +27,12 @@ jobs:
 
     steps:
       - name: Checkout MiSysMon
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           path: MiSysMon
 
       - name: Checkout common_lib
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           repository: tkshnkgwr/common_lib
           path: common_lib

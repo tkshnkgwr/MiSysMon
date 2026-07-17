@@ -17,12 +17,12 @@ jobs:
 
     steps:
       - name: Checkout MiSysMon
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           path: MiSysMon
 
       - name: Checkout common_lib
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           repository: tkshnkgwr/common_lib
           path: common_lib
@@ -38,7 +38,7 @@ jobs:
         run: cargo build --release
 
       - name: Create Draft Release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

@@ -8,6 +8,9 @@
 - **ウィンドウ幅の動的リサイズ機能**: 設定で表示項目をオン/オフした際、コンテンツの必要幅に合わせてメインウィンドウのサイズを動的にリサイズし、余白のないコンパクトなレイアウトを維持する機能を実装。
 - **AI事前検証プロセスのMarkdown例外追記**: AIエージェント（大賢者）がMarkdownファイル（`.md`）のみを修正した際、ローカルの事前検証プロセス（clippy, fmt, test, doc）をスキップできるルールを `.agents/AGENTS.md` に追加。
 
+### Fixed
+- **GitHub Actions ワークフローの修正 (ci.yml / release.yml)**: 未定義の `actions/checkout@v7` および `softprops/action-gh-release@v3` に起因して発生していた GitHub Actions 実行エラーを修正するため、安定版の `checkout@v4` および `action-gh-release@v2` へバージョンを適正化。
+
 ### Removed
 - **自動バージョンバンプ機能の廃止**: GitHubでの不要な自動コミットやコンフリクトを回避するため、`Auto Bump Version` ワークフロー (`bump-version.yml`) を削除し、開発者が手動でバージョンバンプおよびタグ管理を行う運用に変更。
 
