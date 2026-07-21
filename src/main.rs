@@ -17,6 +17,7 @@ use sysinfo::{Components, Disks, Networks, System};
 #[cfg(target_os = "windows")]
 #[allow(clippy::upper_case_acronyms)]
 mod win32 {
+    use eframe::egui;
     use std::ffi::c_void;
 
     // HMONITOR はハンドル（ポインタ）型
@@ -50,6 +51,19 @@ mod win32 {
     extern "system" {
         fn MonitorFromPoint(pt: POINT, dw_flags: u32) -> HMONITOR;
         fn GetMonitorInfoW(h_monitor: HMONITOR, lpmi: *mut MONITORINFO) -> i32;
+        fn GetCursorPos(lp_point: *mut POINT) -> i32;
+    }
+
+    /// 現在のマウス絶対画面座標 (x, y) を取得します。
+    pub fn get_cursor_pos() -> Option<egui::Pos2> {
+        unsafe {
+            let mut pt = POINT { x: 0, y: 0 };
+            if GetCursorPos(&mut pt) != 0 {
+                Some(egui::Pos2::new(pt.x as f32, pt.y as f32))
+            } else {
+                None
+            }
+        }
     }
 
     /// 指定したスクリーン座標 (x, y) が現在接続されているいずれかのモニターの表示領域内にあるかチェックします。
@@ -195,6 +209,12 @@ struct SystemMonitor {
     mem_history: Vec<f32>,
     /// 設定画面が開いているかどうか。
     settings_open: bool,
+    /// 最後に適用したウィンドウ幅。
+    last_width: f32,
+    /// ドラッグ移動開始時のウィンドウ位置。
+    drag_start_win_pos: Option<egui::Pos2>,
+    /// ドラッグ移動開始時の画面絶対マウス座標。
+    drag_start_mouse_pos: Option<egui::Pos2>,
 }
 
 impl SystemMonitor {
@@ -275,6 +295,9 @@ impl SystemMonitor {
             cpu_history: Vec::new(),
             mem_history: Vec::new(),
             settings_open: false,
+            last_width: 0.0,
+            drag_start_win_pos: None,
+            drag_start_mouse_pos: None,
         }
     }
 
@@ -442,25 +465,25 @@ fn draw_trend_line(ui: &mut egui::Ui, history: &[f32], max_val: f32) {
 impl SystemMonitor {
     /// 現在の表示項目に基づいて必要なウィンドウ幅を動的に計算します。
     fn calculate_width(&self) -> f32 {
-        let mut width: f32 = 60.0; // 左右マージン + グリップ + 終了ボタンなど
+        let mut width: f32 = 70.0; // 左右マージン + グリップ + 終了ボタン + spacing
 
         if self.config.show_cpu {
-            width += 155.0;
+            width += 185.0;
         }
         if self.config.show_mem {
-            width += 115.0;
+            width += 150.0;
         }
         if self.config.show_net {
-            width += 155.0;
+            width += 185.0;
         }
         if self.config.show_disk {
-            width += 125.0;
+            width += 160.0;
         }
         if self.config.show_io {
-            width += 155.0;
+            width += 175.0;
         }
         if self.config.show_version {
-            width += 60.0;
+            width += 90.0;
         }
         if self.config.show_clock {
             width += 195.0;
@@ -483,13 +506,6 @@ impl eframe::App for SystemMonitor {
     /// メトリクス情報の更新を行うほか、ウィンドウのドラッグ移動処理、
     /// 各項目のレイアウト、終了ボタンの制御、時計の表示を行います。
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        // 現在のウィンドウ位置を監視して保存用に更新 (outer_rect.min -> position)
-        ui.input(|i| {
-            if let Some(rect) = i.viewport().outer_rect {
-                self.config.pos = Some(rect.min);
-            }
-        });
-
         // 設定された更新間隔ごとにデータを更新
         let interval = Duration::from_secs_f32(self.config.update_interval_secs);
         if self.last_update.elapsed() >= interval {
@@ -511,6 +527,7 @@ impl eframe::App for SystemMonitor {
         });
 
         let current_width = self.calculate_width();
+        let mut is_dragging = false;
 
         egui::CentralPanel::default()
             .frame(panel_frame)
@@ -534,34 +551,59 @@ impl eframe::App for SystemMonitor {
                         self.settings_open = !self.settings_open;
                     }
 
-                    if drag_label.dragged() {
-                        let delta = drag_label.drag_delta();
-                        if delta != egui::Vec2::ZERO {
-                            if let Some(pos) = self.config.pos {
-                                #[allow(unused_mut)]
-                                let mut new_pos = pos + delta;
-
-                                #[cfg(target_os = "windows")]
-                                if self.config.enable_snap {
-                                    if let Some(work_area) = win32::get_monitor_work_area(
-                                        new_pos.x as i32,
-                                        new_pos.y as i32,
-                                    ) {
-                                        new_pos = apply_snap(
-                                            new_pos,
-                                            egui::vec2(current_width, 32.0),
-                                            work_area,
-                                        );
-                                    }
-                                }
-
-                                self.config.pos = Some(new_pos);
-                                ui.ctx()
-                                    .send_viewport_cmd(egui::ViewportCommand::OuterPosition(
-                                        new_pos,
-                                    ));
-                            }
+                    if drag_label.drag_started() {
+                        self.drag_start_win_pos = self.config.pos;
+                        #[cfg(target_os = "windows")]
+                        {
+                            self.drag_start_mouse_pos = win32::get_cursor_pos();
                         }
+                        #[cfg(not(target_os = "windows"))]
+                        {
+                            self.drag_start_mouse_pos = ui.input(|i| i.pointer.interact_pos());
+                        }
+                    }
+
+                    if drag_label.dragged() {
+                        is_dragging = true;
+
+                        #[cfg(target_os = "windows")]
+                        let current_mouse = win32::get_cursor_pos();
+                        #[cfg(not(target_os = "windows"))]
+                        let current_mouse = ui.input(|i| i.pointer.interact_pos());
+
+                        if let (Some(start_win), Some(start_mouse), Some(curr_mouse)) = (
+                            self.drag_start_win_pos,
+                            self.drag_start_mouse_pos,
+                            current_mouse,
+                        ) {
+                            let mouse_delta = curr_mouse - start_mouse;
+                            #[allow(unused_mut)]
+                            let mut new_pos = start_win + mouse_delta;
+
+                            #[cfg(target_os = "windows")]
+                            if self.config.enable_snap {
+                                let center_x = (new_pos.x + current_width / 2.0) as i32;
+                                let center_y = (new_pos.y + 16.0) as i32;
+                                if let Some(work_area) =
+                                    win32::get_monitor_work_area(center_x, center_y)
+                                {
+                                    new_pos = apply_snap(
+                                        new_pos,
+                                        egui::vec2(current_width, 32.0),
+                                        work_area,
+                                    );
+                                }
+                            }
+
+                            self.config.pos = Some(new_pos);
+                            ui.ctx()
+                                .send_viewport_cmd(egui::ViewportCommand::OuterPosition(new_pos));
+                        }
+                    }
+
+                    if drag_label.drag_stopped() {
+                        self.drag_start_win_pos = None;
+                        self.drag_start_mouse_pos = None;
                     }
 
                     ui.add_space(10.0);
@@ -684,14 +726,20 @@ impl eframe::App for SystemMonitor {
             let mut open = settings_open;
             let mut config_changed = false;
 
+            let mut builder = egui::ViewportBuilder::default()
+                .with_title("MiSysMon Settings")
+                .with_inner_size([300.0, 430.0])
+                .with_resizable(false)
+                .with_decorations(true)
+                .with_always_on_top();
+
+            if let Some(pos) = self.config.pos {
+                builder = builder.with_position(egui::pos2(pos.x, pos.y + 36.0));
+            }
+
             ui.ctx().show_viewport_immediate(
                 egui::ViewportId::from_hash_of("settings_window"),
-                egui::ViewportBuilder::default()
-                    .with_title("MiSysMon Settings")
-                    .with_inner_size([300.0, 430.0])
-                    .with_resizable(false)
-                    .with_decorations(true)
-                    .with_always_on_top(),
+                builder,
                 |ctx, class| {
                     if class != egui::ViewportClass::Immediate {
                         return;
@@ -800,6 +848,7 @@ impl eframe::App for SystemMonitor {
 
             if config_changed {
                 let new_width = self.calculate_width();
+                self.last_width = new_width;
                 ui.ctx()
                     .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
                         new_width, 32.0,
@@ -807,12 +856,24 @@ impl eframe::App for SystemMonitor {
             }
         }
 
-        // 動的サイズを強制
-        ui.ctx()
-            .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
-                current_width,
-                32.0,
-            )));
+        // 幅が変更された場合のみサイズ指定コマンドを送信
+        if (self.last_width - current_width).abs() > 0.1 {
+            self.last_width = current_width;
+            ui.ctx()
+                .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
+                    current_width,
+                    32.0,
+                )));
+        }
+
+        // ドラッグ中でない場合のみ現在のウィンドウ位置を監視して保存用に更新
+        if !is_dragging {
+            ui.input(|i| {
+                if let Some(rect) = i.viewport().outer_rect {
+                    self.config.pos = Some(rect.min);
+                }
+            });
+        }
 
         ui.ctx().request_repaint_after(Duration::from_secs_f32(
             self.config.update_interval_secs.min(1.0),
