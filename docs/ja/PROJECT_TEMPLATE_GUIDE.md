@@ -1,4 +1,7 @@
+[English](../en/PROJECT_TEMPLATE_GUIDE.md) | **日本語版**
+
 # Rust デスクトップアプリ開発：新規プロジェクト用雛形ガイドライン
+
 
 Google AI Studio や AntiGravity（Gem）と共同で Rust デスクトップアプリ（eframe/egui等）を開発する際、初期設定や文字コード問題で躓かないための「黄金構成」と「AI指示書（AGENTS.md）」のテンプレートです。
 

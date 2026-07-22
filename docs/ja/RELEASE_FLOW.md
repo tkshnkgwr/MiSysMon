@@ -1,4 +1,7 @@
+[English](../en/RELEASE_FLOW.md) | **日本語版**
+
 # リモートリリースおよびバージョン管理フロー手順書
+
 
 本ドキュメントでは、Mini System Monitor (MiSysMon) におけるGitHub Actionsを利用したリリースビルド（`.exe`アセット付ドラフトリリース）の作成フローとトラブルシューティングについて解説します。
 

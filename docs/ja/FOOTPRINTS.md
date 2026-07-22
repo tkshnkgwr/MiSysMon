@@ -1,4 +1,7 @@
+[English](../en/FOOTPRINTS.md) | **日本語版**
+
 # Footprints: Mini System Monitor Development Journey
+
 
 本プロジェクトの開発における技術的変遷、意思決定の背景、および修正の全記録です。
 

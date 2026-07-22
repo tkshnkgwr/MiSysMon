@@ -11,8 +11,8 @@
 
 An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resource environments (such as lower-spec Windows PCs).
 
-| CPU | MEM | NET | DISK | IO | CLOCK |
-| :---: | :---: | :---: | :---: | :---: | :---: |
+|    CPU     |  MEM  |      NET      |   DISK    |      IO       |          CLOCK          |
+| :--------: | :---: | :-----------: | :-------: | :-----------: | :---------------------: |
 | 5.1% (42°C) | 12.3% | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | 2026/04/21(Tue) 12:00:00 |
 
 ## 🌟 Features
@@ -81,8 +81,16 @@ Window location and other application states are persisted in:
 
 ## 📚 Internal Documentation
 For developers or advanced administrators, check out the following internal guides:
-- [Multi-Repository Development Guide](./docs/DEVELOPMENT.md): Learn how to set up the workspace alongside `common_lib`.
-- [Release & Versioning Flow Guide](./docs/RELEASE_FLOW.md): Understand the GitHub Actions release workflow and PAT setup.
+- [Specification](./docs/en/SPEC.md): Technical stack and detailed features list.
+- [Architecture](./docs/en/ARCHITECTURE.md): Design patterns, structural intents, and data flows.
+- [Multi-Repository Development Guide](./docs/en/DEVELOPMENT.md): Learn how to set up the workspace alongside `common_lib`.
+- [Release & Versioning Flow Guide](./docs/en/RELEASE_FLOW.md): Understand the GitHub Actions release workflow and PAT setup.
+- [AI Coding Instructions](./docs/en/INSTRUCTIONS.md): Coding guidelines for AI Agents (Daikenja).
+- [Footprints Log](./docs/en/FOOTPRINTS.md): Development milestones and performance records.
+- [Test Report](./docs/en/TEST_REPORT.md): Telemetry validation results.
+- [Todo List](./docs/en/TODO.md): Immediate tasks and backlogs.
+- [Project Template Guide](./docs/en/PROJECT_TEMPLATE_GUIDE.md): Golden template for starting new Rust desktop apps.
+
 
 ## 📄 License
 MIT License (Refer to the [LICENSE](./LICENSE) file for details)

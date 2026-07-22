@@ -1,4 +1,7 @@
+[English](../en/DIAGRAM.md) | **日本語版**
+
 # System Diagram
+
 
 ```mermaid
 graph TD

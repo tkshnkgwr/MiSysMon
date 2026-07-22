@@ -1,4 +1,7 @@
+[English](../en/TODO.md) | **日本語版**
+
 # Todo List: Mini System Monitor (MiSysMon)
+
 
 本プロジェクトの開発ステータス、直近のタスク、および将来的なバックログ（機能拡張のロードマップ）を管理するドキュメントです。
 

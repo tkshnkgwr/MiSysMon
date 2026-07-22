@@ -1,4 +1,7 @@
+[English](../en/SPEC.md) | **日本語版**
+
 # Specification: Mini System Monitor
+
 
 **バージョン**: 1.0.0
 **内部バージョン**: 1.0.0.0
