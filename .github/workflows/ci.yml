@@ -15,10 +15,22 @@ jobs:
   check-and-test:
     name: Check, Test & Clippy (Windows)
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: MiSysMon
 
     steps:
-      - name: Checkout repository
+      - name: Checkout MiSysMon
         uses: actions/checkout@v4
+        with:
+          path: MiSysMon
+
+      - name: Checkout common_lib
+        uses: actions/checkout@v4
+        with:
+          repository: tkshnkgwr/common_lib
+          path: common_lib
+          token: ${{ secrets.PAT || github.token }}
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -27,9 +39,14 @@ jobs:
 
       - name: Rust Cache
         uses: swatinem/rust-cache@v2
+        with:
+          workspaces: MiSysMon -> target
 
       - name: Check formatting
         run: cargo fmt --check
+
+      - name: Run check
+        run: cargo check --all-targets
 
       - name: Run clippy
         run: cargo clippy --all-targets -- -D warnings
