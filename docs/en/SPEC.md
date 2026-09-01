@@ -7,22 +7,22 @@
 
 ## 1. Overview
 An extremely lightweight system monitor designed to run on Windows in low-resource environments.
-It stays always-on-top and monitors system resources in real-time (at 1-second intervals by default).
+It stays always-on-top and monitors system resources in real-time (at 1-second intervals by default, configurable from 0.5s to 5.0s).
 
 ## 2. Technical Stack
-- **Prototype:** React, Tailwind CSS, Framer Motion
-- **Production:** Rust, egui, eframe (0.35+), sysinfo (0.38+), chrono, serde, serde_json, common_lib (local shared crate)
+- **Production:** Rust (Edition 2021), egui / eframe (0.35.0), sysinfo (0.38.0), chrono (0.4.38), serde / serde_json, common_lib (local shared crate)
+- **Architecture:** Modular codebase design (`config`, `monitor`, `ui`, `win32`, `main`)
 
 ## 3. Visual Specifications
-- **Size:** 1100px x 32px (horizontal slim bar)
+- **Size:** 1210px x 32px (default with all components enabled, dynamically resized down to a 200px minimum clamp)
 - **Decoration:** No title bar (Borderless)
-- **Background:** Semi-transparent (Alpha: 200/255)
+- **Background:** Semi-transparent (Alpha: 0.3 to 1.0, default 0.78)
 - **Font:** Highly visible sans-serif
 - **Placement:** Always on Top
 
 ## 4. Functional Specifications
 - **CPU Monitoring:** Displays the average utilization across all cores using `sysinfo`.
-- **CPU Temperature:** Displays temperature retrieved from CPU hardware sensors.
+- **CPU Temperature:** Displays temperature retrieved from CPU hardware sensors (falls back to max sensor temp if unlabeled).
 - **Memory Monitoring:** Displays the percentage of used memory / total memory.
 - **Network Monitoring:** Displays total upload/download speeds (Upload `^` / Download `v`).
 - **Disk Space Monitoring:** Displays used space and total capacity of the system disk (e.g. 123GB/512GB).

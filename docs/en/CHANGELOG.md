@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [2026-09-01]
+### Added
+- **Modular Architecture Refactoring**: Decoupled `src/main.rs` into specialized modules (`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`) adhering to the < 1,000 LOC guideline.
+- **Comprehensive Unit Test Suite (15 Tests)**: Built comprehensive unit tests covering configuration defaults, JSON roundtrip fidelity, partial key default fallbacks, 15px edge auto-snap (all 4 directions & corners), dynamic window width calculation, log file rotation succession, sparkline FIFO history queue management, and saturating subtraction arithmetic.
+- **Comprehensive RustDoc Modernization**: Enriched API documentation across all modules, private/public structs, and functions with beginner-accessible explanations and safety guarantees, achieving zero `cargo doc` warnings.
+- **Extended TODO Backlog Roadmap**: Added high-value backlog proposals including high-load/high-temp visual alerts, theme and accent color customizations, top resource consumer tooltips on hover, system tray minimization with global hotkeys, and snapping sensitivity configuration.
+- **Full Documentation Synchronization & Table Alignment**: Synchronized `SPEC.md`, `ARCHITECTURE.md`, `TESTING.md`, `TEST_REPORT.md`, and `TODO.md` with v1.0.0 implementation, ensuring clean vertical alignment across all Markdown tables.
+
 ## [2026-07-21]
 ### Fixed
 - **Revamped Window Dragging Based on Absolute Screen Mouse Coordinates**: Introduced an anchor-point mechanism using Win32 `GetCursorPos` to fix the issue where the window flies away from the cursor or shakes/duplicates during drag movement. Achieved perfect synchronization with the mouse pointer and real-time snapping.
@@ -32,9 +40,9 @@
 - **Multi-Monitor Window Position Validation**: Implemented a fallback logic using Win32 API `MonitorFromPoint` (via raw link to suppress binary size increases) to reset coordinates to the screen center if the saved position is out of bounds (due to monitor disconnection or resolution changes).
 - **Log Rotation Feature**: Added a feature to rotate CPU temperature diagnostic logs (`sensors_debug.log`) up to 3 generations at startup.
 - **Documentation**:
-  - Created architecture document [ARCHITECTURE.md](docs/ARCHITECTURE.md).
-  - Created AI instruction document [.agents/INSTRUCTIONS.md](.agents/INSTRUCTIONS.md).
-  - Created todo list [TODO.md](docs/TODO.md).
+  - Created architecture document [ARCHITECTURE.md](ARCHITECTURE.md).
+  - Created AI instruction document [.agents/INSTRUCTIONS.md](../../.agents/INSTRUCTIONS.md).
+  - Created todo list [TODO.md](TODO.md).
 
 ### Fixed
 - **Fixed Network Bandwidth Display Spike at Startup**: Prevented the cumulative transfer bytes from spiking at startup by recording the baseline network bytes beforehand.

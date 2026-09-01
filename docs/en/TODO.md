@@ -49,6 +49,12 @@ This document tracks the development status, immediate tasks, and future backlog
 - [x] **Dynamic Width Calculations & Layout Fixes**:
   - Refined required width metrics for each component in `calculate_width()` to prevent overlapping elements.
   - Optimized calls to `ViewportCommand::InnerSize` to fire only on width changes.
+- [x] **Modular Architecture Refactoring**:
+  - Decoupled single-file codebase into specialized modules (`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`).
+  - Enforced the < 1,000 LOC rule per file for high maintainability and clear separation of concerns.
+- [x] **Comprehensive RustDoc & Test Suite Expansion**:
+  - Enriched API documentation with accessible explanations, parameter/return details, and safety guarantees.
+  - Expanded unit test coverage from 1 to 15 tests (serialization roundtrip, partial fallback, snap boundary checks, dynamic width calculation, log succession, history queue capping, and saturating arithmetic).
 
 ---
 
@@ -60,4 +66,15 @@ This document tracks the development status, immediate tasks, and future backlog
 
 ## 3. Future Backlog (Backlog)
 
-- (No pending future features. Feature requests will be listed here.)
+- [ ] **High-Load & High-Temperature Visual Alerts**:
+  - Highlight metrics/sparklines with alert colors (orange to red) when CPU usage exceeds 90% or CPU temperature exceeds 80°C.
+- [ ] **Custom Color Themes & Accent Options**:
+  - Allow user customization of text color, sparkline color (cyan, green, magenta, orange), and background opacity through the settings dialog.
+- [ ] **Top Resource-Consuming Process Tooltips**:
+  - Display tooltips showing the top 3 processes by CPU, Memory, and Disk I/O consumption when hovering over metric labels.
+- [ ] **System Tray Minimization & Global Toggle Hotkey**:
+  - Enable minimize-to-tray with a customizable global hotkey (e.g. `Ctrl+Shift+M`) for quick show/hide toggle.
+- [ ] **Snap Threshold & Monitor Pinning Adjustments**:
+  - Configurable snapping threshold (5px–30px) and presets for pinning to specific monitors in multi-display setups.
+- [ ] **Diagnostics Log Viewer & Sensor Rescan**:
+  - GUI-based sensor rescan and diagnostic log inspection dialog accessible directly from settings.

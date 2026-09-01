@@ -2,7 +2,6 @@
 
 # Footprints: Mini System Monitor Development Journey
 
-
 本プロジェクトの開発における技術的変遷、意思決定の背景、および修正の全記録です。
 
 ## 🐾 MileStone 1: Prototype Phase (React -> Rust への決断)

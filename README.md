@@ -4,33 +4,36 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
-![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)
+![Rust](https://img.shields.io/badge/rust-1.80%2B-orange.svg)
 [![CI](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml)
 [![Latest Release](https://img.shields.io/github/v/release/tkshnkgwr/MiSysMon?logo=github)](https://github.com/tkshnkgwr/MiSysMon/releases)
 
-
 An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resource environments (such as lower-spec Windows PCs).
 
-|    CPU     |  MEM  |      NET      |   DISK    |      IO       |          CLOCK          |
-| :--------: | :---: | :-----------: | :-------: | :-----------: | :---------------------: |
-| 5.1% (42°C) | 12.3% | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | 2026/04/21(Tue) 12:00:00 |
+|     CPU     |   CPU GRAPH   |  MEM  |   MEM GRAPH   |      NET      |   DISK    |      IO       |   VER   |          CLOCK           |
+| :---------: | :-----------: | :---: | :-----------: | :-----------: | :-------: | :-----------: | :-----: | :----------------------: |
+| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.0.0  | 2026/09/01(Tue) 13:45:00 |
 
 ## 🌟 Features
 
-- **Ultra-Lightweight Operation:** Built with pure Rust + `egui` (Immediate-mode GUI), resulting in significantly lower memory footprint and CPU utilization compared to WebView-based frameworks (like Tauri or Electron).
-- **Slim & Space-Saving:** A horizontal bar design of 1100x32px. It fits neatly at the top or bottom of your desktop without interrupting your workflow.
-- **Always on Top / Transparent Background:** Transparent background overlay that always stays on top of other windows so you can keep an eye on your system at all times.
+- **Ultra-Lightweight Operation:** Built with pure Rust + `egui` (Immediate-mode GUI), resulting in significantly lower memory footprint (~15–20MB) and minimal CPU utilization (<0.1%) compared to WebView-based frameworks.
+- **Slim & Space-Saving:** A horizontal bar design (32px height). Fits neatly at the top or bottom of your desktop without interrupting your workflow.
+- **Screen-Edge Auto-Snap:** Automatically snaps to desktop edges when dragged within 15px.
+- **Absolute Screen Coordinate Dragging:** Smooth, zero-displacement drag motion fully synchronized with the mouse cursor.
+- **Real-Time Sparklines:** Displays real-time 12px height trendline graphs representing the last 30 seconds of CPU and memory history.
+- **Settings Customization Screen:** Double-clicking the grip (`=`) or right-clicking displays a popup for configuring opacity, update interval, snapping, and component toggles with dynamic resizing.
+- **Always on Top / Transparent Background:** Transparent background overlay that always stays on top of other windows.
 - **Window Position Persistence:** Automatically remembers and restores the window position from the last session upon launching.
-- **Zero Distraction / Native GUI:** Runs as a polished GUI application without opening a background Command Prompt (black DOS window).
-- **Single Instance Prevention:** Uses a Windows Named Mutex to prevent multiple instances from running simultaneously, avoiding UI overlaps and unnecessary resource consumption by instantly terminating subsequent launches.
+- **Single Instance Prevention:** Uses a Windows Named Mutex to prevent multiple instances from running simultaneously, terminating duplicate launches immediately.
 
 ## 📊 Monitored Metrics
 
-- **CPU:** Usage (%) and Package Temperature (°C) (*Note: Displays `--°C` if sensor data is unavailable due to OS security limits or unmatched hardware. Check `%APPDATA%\Mini System Monitor\sensors_debug.log` for diagnostics.*)
-- **Memory:** Utilized percentage (%)
-- **Network:** Active real-time uploads (^) and downloads (v) speeds
+- **CPU:** Usage (%), Package Temperature (°C), and 30-second trendline sparkline
+- **Memory:** Utilized percentage (%) and 30-second trendline sparkline
+- **Network:** Active real-time upload (^) and download (v) speeds
 - **Disk Space:** Utilized space and total capacity of the system drive
 - **Disk I/O:** Real-time disk read (R) and write (W) speeds
+- **Version:** Current application version (`vX.Y.Z`)
 - **Clock:** Fully integrated date & time display with seconds formatting
 
 ## 🛠️ Setup and Build Instruction
@@ -71,26 +74,25 @@ If you want to run this application automatically when Windows starts, register 
 
 ### Configuration Storage & Resetting Position
 Window location and other application states are persisted in:
-`%APPDATA%\Mini System Monitor\data\app.ron`
-*(Full path: `C:\Users\<username>\AppData\Roaming\Mini System Monitor\data\app.ron`)*
+`%APPDATA%\Mini System Monitor\`
 
 **How to reset if the window goes off-screen:**
 1. Close the application by clicking the `×` button on the far right.
-2. Delete the `app.ron` file (or the entire `Mini System Monitor` folder).
+2. Delete the configuration file inside the `Mini System Monitor` folder.
 3. Relaunch the application. It will open in the default position and size, generating a fresh config file.
 
 ## 📚 Internal Documentation
 For developers or advanced administrators, check out the following internal guides:
 - [Specification](./docs/en/SPEC.md): Technical stack and detailed features list.
 - [Architecture](./docs/en/ARCHITECTURE.md): Design patterns, structural intents, and data flows.
+- [Testing Guidelines & Suite](./docs/en/TESTING.md): Modular unit testing policies and test catalogs.
+- [Test Report](./docs/en/TEST_REPORT.md): Telemetry validation results.
 - [Multi-Repository Development Guide](./docs/en/DEVELOPMENT.md): Learn how to set up the workspace alongside `common_lib`.
 - [Release & Versioning Flow Guide](./docs/en/RELEASE_FLOW.md): Understand the GitHub Actions release workflow and PAT setup.
 - [AI Coding Instructions](./docs/en/INSTRUCTIONS.md): Coding guidelines for AI Agents (Daikenja).
 - [Footprints Log](./docs/en/FOOTPRINTS.md): Development milestones and performance records.
-- [Test Report](./docs/en/TEST_REPORT.md): Telemetry validation results.
 - [Todo List](./docs/en/TODO.md): Immediate tasks and backlogs.
 - [Project Template Guide](./docs/en/PROJECT_TEMPLATE_GUIDE.md): Golden template for starting new Rust desktop apps.
-
 
 ## 📄 License
 MIT License (Refer to the [LICENSE](./LICENSE) file for details)

@@ -2,7 +2,6 @@
 
 # Rust デスクトップアプリ開発：新規プロジェクト用雛形ガイドライン
 
-
 Google AI Studio や AntiGravity（Gem）と共同で Rust デスクトップアプリ（eframe/egui等）を開発する際、初期設定や文字コード問題で躓かないための「黄金構成」と「AI指示書（AGENTS.md）」のテンプレートです。
 
 次回以降のプロジェクト作成時は、この構成をコピー＆ペーストすることで、安全かつ綺麗な状態でスムーズに開発をスタートできます。
@@ -454,5 +453,4 @@ indent_size = 2
 trim_trailing_whitespace = false
 indent_style = space
 indent_size = 4
-```
 ```

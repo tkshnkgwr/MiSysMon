@@ -23,10 +23,10 @@ This document outlines the security policies, vulnerability reporting processes,
 
 Security updates are provided for the following versions:
 
-| Version | Support Status |
-| :--- | :---: |
-| Latest Release (`v1.x.x`) | ✅ Supported |
-| Legacy Releases | ❌ Unsupported |
+| Version                  | Support Status |
+| :----------------------- | :------------: |
+| Latest Release (`v1.x.x`) |  ✅ Supported  |
+| Legacy Releases          | ❌ Unsupported |
 
 ---
 

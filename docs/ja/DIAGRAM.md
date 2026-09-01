@@ -2,7 +2,6 @@
 
 # System Diagram
 
-
 ```mermaid
 graph TD
     subgraph "OS (Windows/Linux)"
