@@ -2,7 +2,7 @@
 
 # Test Report: Mini System Monitor (MiSysMon)
 
-**Target Version**: mini-system-monitor v1.0.0
+**Target Version**: mini-system-monitor v1.1.0
 
 ## 1. Test Environment
 - **OS:** Windows 11 / Windows 10

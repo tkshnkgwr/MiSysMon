@@ -2,7 +2,7 @@
 
 # Changelog
 
-## [2026-09-01]
+## [1.1.0] - 2026-09-01
 ### Added
 - **Modular Architecture Refactoring**: Decoupled `src/main.rs` into specialized modules (`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`) adhering to the < 1,000 LOC guideline.
 - **Comprehensive Unit Test Suite (15 Tests)**: Built comprehensive unit tests covering configuration defaults, JSON roundtrip fidelity, partial key default fallbacks, 15px edge auto-snap (all 4 directions & corners), dynamic window width calculation, log file rotation succession, sparkline FIFO history queue management, and saturating subtraction arithmetic.
