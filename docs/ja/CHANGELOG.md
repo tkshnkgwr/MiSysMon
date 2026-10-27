@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.1.1] - 2026-10-27
+### Fixed
+- **起動時初期化処理の最適化**: `main.rs` 内で `Config` のデシリアライズが `SystemMonitor::new` と重複して2重実行されていた処理を解消し、`monitor.config` を直接参照するよう整理。
+- **README ドキュメントの完全復元**: 欠落していた詳細セクション（特徴、監視項目、ビルド手順、設定方法、全内部ドキュメントへのリンク一覧）を日英ともに完全復元。
+- **LICENSE ファイルの書式適正化**: 混入していた UTF-8 BOM を除去し、末尾改行を付与して `.editorconfig` に適合。
+- **バージョン一括更新スクリプトの多言語対応**: `scripts/bump-version.ps1` が `docs/ja/` および `docs/en/` 配下の仕様書・テスト結果報告書を正常に検出・更新できるように修正。
+- **全ドキュメント・システム設定の同期・整備**: `.gitignore` のタイポ修正、`RULES.md` への `vault-memo` スキル追記、`INSTRUCTIONS.md` のモジュール設計・多言語同期ルールの整合性向上、`FOOTPRINTS.md` への MileStone 10 追記、および全 Markdown テーブルの垂直整列を徹底。
+
 ## [1.1.0] - 2026-09-01
 ### Added
 - **モジュール分割リファクタリング**: 1,000行制限ルールおよび保守性向上に基づき、単一ファイル `src/main.rs` を専門モジュール（`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`）へ分割。
@@ -41,7 +49,7 @@
 - **ログローテーション機能**: 温度センサー診断ログ `sensors_debug.log` を起動時に最大3世代までローテーションさせる機能を追加。
 - **ドキュメンテーション**:
   - 設計書 [ARCHITECTURE.md](ARCHITECTURE.md) の新規作成。
-  - AI指示書 [.agents/INSTRUCTIONS.md](../../.agents/INSTRUCTIONS.md) の新規作成。
+  - AI指示書 [INSTRUCTIONS.md](INSTRUCTIONS.md) の新規作成。
   - 開発タスクリスト [TODO.md](TODO.md) の新規作成。
 
 ### Fixed

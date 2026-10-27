@@ -12,7 +12,7 @@ An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resour
 
 |     CPU     |   CPU GRAPH   |  MEM  |   MEM GRAPH   |      NET      |   DISK    |      IO       |   VER   |          CLOCK           |
 | :---------: | :-----------: | :---: | :-----------: | :-----------: | :-------: | :-----------: | :-----: | :----------------------: |
-| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.1.0  | 2026/09/01(Tue) 13:45:00 |
+| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.1.1  | 2026/09/01(Tue) 13:45:00 |
 
 ## 🌟 Features
 
@@ -43,6 +43,9 @@ An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resour
 
 ### Build Steps
 ```powershell
+# Clone the shared library (required in the same parent directory)
+git clone https://github.com/tkshnkgwr/common_lib.git
+
 # Clone the repository
 git clone https://github.com/tkshnkgwr/MiSysMon.git
 cd MiSysMon
@@ -85,14 +88,20 @@ Window location and other application states are persisted in:
 For developers or advanced administrators, check out the following internal guides:
 - [Specification](./docs/en/SPEC.md): Technical stack and detailed features list.
 - [Architecture](./docs/en/ARCHITECTURE.md): Design patterns, structural intents, and data flows.
+- [System Diagram](./docs/en/DIAGRAM.md): System architecture and dataflow Mermaid diagram.
 - [Testing Guidelines & Suite](./docs/en/TESTING.md): Modular unit testing policies and test catalogs.
 - [Test Report](./docs/en/TEST_REPORT.md): Telemetry validation results.
 - [Multi-Repository Development Guide](./docs/en/DEVELOPMENT.md): Learn how to set up the workspace alongside `common_lib`.
+- [Release Manual](./docs/en/RELEASE.md): Step-by-step version bump and release procedures.
 - [Release & Versioning Flow Guide](./docs/en/RELEASE_FLOW.md): Understand the GitHub Actions release workflow and PAT setup.
+- [Contributing Guidelines](./docs/en/CONTRIBUTING.md): Guidelines for bug reports, feature proposals, and pull requests.
+- [Security Policy](./docs/en/SECURITY.md): Security principles, supported versions, and vulnerability reporting.
 - [AI Coding Instructions](./docs/en/INSTRUCTIONS.md): Coding guidelines for AI Agents (Daikenja).
 - [Footprints Log](./docs/en/FOOTPRINTS.md): Development milestones and performance records.
+- [Changelog](./docs/en/CHANGELOG.md): Detailed version history and release notes.
 - [Todo List](./docs/en/TODO.md): Immediate tasks and backlogs.
 - [Project Template Guide](./docs/en/PROJECT_TEMPLATE_GUIDE.md): Golden template for starting new Rust desktop apps.
 
 ## 📄 License
-MIT License (Refer to the [LICENSE](./LICENSE) file for details)
+
+This project is licensed under the MIT License - Copyright (c) 2026 tkshnkgwr. See the [LICENSE](./LICENSE) file for details.

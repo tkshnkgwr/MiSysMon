@@ -19,7 +19,6 @@ pub mod monitor;
 pub mod ui;
 pub mod win32;
 
-use config::Config;
 use eframe::egui;
 use monitor::SystemMonitor;
 use std::time::Duration;
@@ -427,11 +426,9 @@ fn main() -> eframe::Result<()> {
     };
 
     // 初期設定の読み込み（位置復元のため）
-    let storage_name = eframe::APP_KEY;
-
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_inner_size([1100.0, 32.0])
+            .with_inner_size([1210.0, 32.0])
             .with_resizable(false) // リサイズ禁止
             .with_decorations(false) // タイトルバー非表示
             .with_transparent(true) // 背景透過
@@ -443,17 +440,11 @@ fn main() -> eframe::Result<()> {
         "Mini System Monitor",
         options,
         Box::new(|cc| {
-            // 保存された位置がある場合は適用
-            let config: Config = cc
-                .storage
-                .and_then(|s| s.get_string(storage_name))
-                .and_then(|json| serde_json::from_str(&json).ok())
-                .unwrap_or_default();
-
             let monitor = SystemMonitor::new(cc);
             let initial_width = ui::calculate_window_width(&monitor.config);
 
-            if let Some(pos) = config.pos {
+            // 保存された位置がある場合は適用
+            if let Some(pos) = monitor.config.pos {
                 // ウィンドウ位置が有効なモニターの表示範囲内にあるか検証
                 #[cfg(target_os = "windows")]
                 let is_valid =

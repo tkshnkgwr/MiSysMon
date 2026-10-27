@@ -9,7 +9,7 @@ This document tracks the development status, immediate tasks, and future backlog
 ## 1. Implemented Features (Done)
 
 - [x] **Basic UI Framework Construction**:
-  - Slim horizontal bar (1100px x 32px) desktop window rendering using `egui` and `eframe`.
+  - Slim horizontal bar (1210px x 32px with all items enabled, dynamically resized down to 200px minimum) desktop window rendering using `egui` and `eframe`.
   - Borderless window, background transparency (Alpha: 200/255), always-on-top, and disabled resizability.
 - [x] **Real-Time System Metrics Collection**:
   - **CPU**: Retrieve average CPU utilization across all cores using `sysinfo`.
@@ -47,7 +47,7 @@ This document tracks the development status, immediate tasks, and future backlog
 - [x] **Config Panel Display Placement in Multi-Monitor Environments**:
   - Fixed config panel coordinates to open on the same monitor as the main window by setting `.with_position()` relative to the main window.
 - [x] **Dynamic Width Calculations & Layout Fixes**:
-  - Refined required width metrics for each component in `calculate_width()` to prevent overlapping elements.
+  - Refined required width metrics for each component in `calculate_window_width()` to prevent overlapping elements.
   - Optimized calls to `ViewportCommand::InnerSize` to fire only on width changes.
 - [x] **Modular Architecture Refactoring**:
   - Decoupled single-file codebase into specialized modules (`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`).

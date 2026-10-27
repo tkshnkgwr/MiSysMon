@@ -69,6 +69,17 @@ This is a comprehensive record of the technical transitions, backgrounds of deci
   - Assigned returned guard object to a local variable `_guard` in `main` for safety.
 - **Outcome:** Redundant raw FFI declarations and unsafe blocks were fully removed, dramatically improving code maintainability. Proven module reusability through the shared crate.
 
+## 🐾 MileStone 10: Modular Refactoring, Settings Viewport, Auto-Snap, and Sparklines (v1.0.0 – v1.1.0)
+- **Challenges:**
+  1. Configuration, system telemetry, Win32 API interop, and UI rendering were concentrated in a single `src/main.rs` file, growing in complexity as features expanded.
+  2. Cursor drift during window dragging, difficulty aligning the bar cleanly to screen edges, and lack of user customization for displayed metrics.
+- **Modifications:**
+  - **Modular Architecture**: Split the codebase into 5 specialized modules (`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`) adhering to the < 1,000 LOC guideline.
+  - **Absolute Coordinate Anchor Dragging & 15px Edge Auto-Snap**: Combined Win32 `GetCursorPos` with `MonitorFromPoint` / `GetMonitorInfoW` for zero-drift dragging and automatic screen-edge snapping.
+  - **Real-Time Sparklines & Settings Sub-Viewport**: Added 12px height 30-second trendlines for CPU/Memory and a dedicated settings popup (opacity, interval, item toggles with dynamic window width resizing).
+  - **Comprehensive Unit Tests & RustDoc**: Expanded the test suite to 15 unit tests and achieved zero-warning RustDoc coverage across all modules.
+- **Outcome:** Established the v1.1.0 architecture combining high usability, extensibility, and maintainability without sacrificing its ultra-lightweight footprint (CPU < 0.1%, RAM ~15–20MB).
+
 ---
 
 ## 📈 Technical Notes (FOOTPRINT Logs)

@@ -186,15 +186,15 @@ foreach ($specPath in $specPaths) {
         Write-Host "Updating $specPath..."
         $lines = [System.IO.File]::ReadAllLines($specPath, $utf8)
         $newLines = [System.Collections.Generic.List[string]]::new()
-        
+
         $hasInternal = $false
         for ($i = 0; $i -lt $lines.Length; $i++) {
-            if ($lines[$i] -match "\*\*$internalLabel\*\*") {
+            if ($lines[$i] -match "\*\*($internalLabel|Internal Version)\*\*") {
                 $hasInternal = $true
                 break
             }
         }
-        
+
         for ($i = 0; $i -lt $lines.Length; $i++) {
             $line = $lines[$i]
             if ($line -match "\*\*$versionLabel\*\*") {
@@ -203,8 +203,17 @@ foreach ($specPath in $specPaths) {
                 if (-not $hasInternal) {
                     $newLines.Add("**$internalLabel**: $InternalVersion")
                 }
+            } elseif ($line -match "\*\*Version\*\*") {
+                $line = "**Version**: $NewVersion"
+                $newLines.Add($line)
+                if (-not $hasInternal) {
+                    $newLines.Add("**Internal Version**: $InternalVersion")
+                }
             } elseif ($line -match "\*\*$internalLabel\*\*") {
                 $line = "**$internalLabel**: $InternalVersion"
+                $newLines.Add($line)
+            } elseif ($line -match "\*\*Internal Version\*\*") {
+                $line = "**Internal Version**: $InternalVersion"
                 $newLines.Add($line)
             } else {
                 $newLines.Add($line)
@@ -225,6 +234,9 @@ foreach ($testPath in $testPaths) {
         for ($i = 0; $i -lt $lines.Length; $i++) {
             if ($lines[$i] -match "\*\*$suitableLabel\*\*") {
                 $lines[$i] = "**$suitableLabel**: mini-system-monitor v$NewVersion"
+                break
+            } elseif ($lines[$i] -match "\*\*Target Version\*\*") {
+                $lines[$i] = "**Target Version**: mini-system-monitor v$NewVersion"
                 break
             }
         }

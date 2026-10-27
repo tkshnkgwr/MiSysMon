@@ -25,11 +25,21 @@ Google AI Studio や AntiGravity（Gem）と共同で Rust デスクトップア
 │       ├── release.yml      # ★自動リリースワークフロー（タグプッシュ時に自動ドラフト作成）
 │       └── bump-version.yml # ★自動バージョンアップワークフロー（mainプッシュ時にタグ自動作成）
 │
-├── docs/                    # 各種技術ドキュメント（ルートを汚さないため）
-│   ├── SPEC.md              # ★製品仕様書（バージョン・技術スタック記載）
-│   ├── DIAGRAM.md           # ★システム構成・データフロー図（Mermaid）
-│   ├── FOOTPRINTS.md        # ★パフォーマンス・リソース使用量計測記録
-│   └── TEST_REPORT.md       # ★テストレポート（検証結果記載）
+├── docs/                    # 各種技術ドキュメント（ルートを汚さないため、日英2言語構成）
+│   ├── en/                  # 英語版ドキュメント
+│   │   ├── SPEC.md          # ★製品仕様書（バージョン・技術スタック記載）
+│   │   ├── DIAGRAM.md       # ★システム構成・データフロー図（Mermaid）
+│   │   ├── FOOTPRINTS.md    # ★パフォーマンス・リソース使用量計測記録
+│   │   ├── INSTRUCTIONS.md  # ★AIコーディング規約
+│   │   ├── TODO.md          # ★進捗管理・タスクバックログ
+│   │   └── TEST_REPORT.md   # ★テストレポート（検証結果記載）
+│   └── ja/                  # 日本語版ドキュメント
+│       ├── SPEC.md
+│       ├── DIAGRAM.md
+│       ├── FOOTPRINTS.md
+│       ├── INSTRUCTIONS.md
+│       ├── TODO.md
+│       └── TEST_REPORT.md
 │
 ├── scripts/                 # 自動化スクリプト
 │   └── bump-version.ps1     # ★文字コード対策済・バージョン一括更新スクリプト
@@ -190,56 +200,72 @@ if (Test-Path $cargoPath) {
     Write-Warning "$cargoPath not found."
 }
 
-# 2. docs/SPEC.md の更新 (バージョンおよび内部バージョンの動的置換・挿入)
-$specPath = "docs/SPEC.md"
-if (Test-Path $specPath) {
-    Write-Host "Updating $specPath..."
-    $lines = [System.IO.File]::ReadAllLines($specPath, $utf8)
-    $newLines = [System.Collections.Generic.List[string]]::new()
-    
-    $hasInternal = $false
-    for ($i = 0; $i -lt $lines.Length; $i++) {
-        if ($lines[$i] -match "\*\*$internalLabel\*\*") {
-            $hasInternal = $true
-            break
-        }
-    }
-    
-    for ($i = 0; $i -lt $lines.Length; $i++) {
-        $line = $lines[$i]
-        if ($line -match "\*\*$versionLabel\*\*") {
-            $line = "**$versionLabel**: $NewVersion"
-            $newLines.Add($line)
-            if (-not $hasInternal) {
-                $newLines.Add("**$internalLabel**: $InternalVersion")
+# 2. docs/ja/SPEC.md および docs/en/SPEC.md の更新 (バージョンおよび内部バージョンの動的置換・挿入)
+$specPaths = @("docs/ja/SPEC.md", "docs/en/SPEC.md")
+foreach ($specPath in $specPaths) {
+    if (Test-Path $specPath) {
+        Write-Host "Updating $specPath..."
+        $lines = [System.IO.File]::ReadAllLines($specPath, $utf8)
+        $newLines = [System.Collections.Generic.List[string]]::new()
+
+        $hasInternal = $false
+        for ($i = 0; $i -lt $lines.Length; $i++) {
+            if ($lines[$i] -match "\*\*($internalLabel|Internal Version)\*\*") {
+                $hasInternal = $true
+                break
             }
-        } elseif ($line -match "\*\*$internalLabel\*\*") {
-            $line = "**$internalLabel**: $InternalVersion"
-            $newLines.Add($line)
-        } else {
-            $newLines.Add($line)
         }
+
+        for ($i = 0; $i -lt $lines.Length; $i++) {
+            $line = $lines[$i]
+            if ($line -match "\*\*$versionLabel\*\*") {
+                $line = "**$versionLabel**: $NewVersion"
+                $newLines.Add($line)
+                if (-not $hasInternal) {
+                    $newLines.Add("**$internalLabel**: $InternalVersion")
+                }
+            } elseif ($line -match "\*\*Version\*\*") {
+                $line = "**Version**: $NewVersion"
+                $newLines.Add($line)
+                if (-not $hasInternal) {
+                    $newLines.Add("**Internal Version**: $InternalVersion")
+                }
+            } elseif ($line -match "\*\*$internalLabel\*\*") {
+                $line = "**$internalLabel**: $InternalVersion"
+                $newLines.Add($line)
+            } elseif ($line -match "\*\*Internal Version\*\*") {
+                $line = "**Internal Version**: $InternalVersion"
+                $newLines.Add($line)
+            } else {
+                $newLines.Add($line)
+            }
+        }
+        [System.IO.File]::WriteAllLines($specPath, $newLines.ToArray(), $utf8)
+    } else {
+        Write-Warning "$specPath not found."
     }
-    [System.IO.File]::WriteAllLines($specPath, $newLines.ToArray(), $utf8)
-} else {
-    Write-Warning "$specPath not found."
 }
 
-# 3. docs/TEST_REPORT.md の更新
-$testPath = "docs/TEST_REPORT.md"
-if (Test-Path $testPath) {
-    Write-Host "Updating $testPath..."
-    $lines = [System.IO.File]::ReadAllLines($testPath, $utf8)
-    for ($i = 0; $i -lt $lines.Length; $i++) {
-        if ($lines[$i] -match "\*\*$suitableLabel\*\*") {
-            # プロジェクトに合わせて適宜書き換え
-            $lines[$i] = "**$suitableLabel**: mini-system-monitor v$NewVersion"
-            break
+# 3. docs/ja/TEST_REPORT.md および docs/en/TEST_REPORT.md の更新
+$testPaths = @("docs/ja/TEST_REPORT.md", "docs/en/TEST_REPORT.md")
+foreach ($testPath in $testPaths) {
+    if (Test-Path $testPath) {
+        Write-Host "Updating $testPath..."
+        $lines = [System.IO.File]::ReadAllLines($testPath, $utf8)
+        for ($i = 0; $i -lt $lines.Length; $i++) {
+            if ($lines[$i] -match "\*\*$suitableLabel\*\*") {
+                # プロジェクトに合わせて適宜書き換え
+                $lines[$i] = "**$suitableLabel**: mini-system-monitor v$NewVersion"
+                break
+            } elseif ($lines[$i] -match "\*\*Target Version\*\*") {
+                $lines[$i] = "**Target Version**: mini-system-monitor v$NewVersion"
+                break
+            }
         }
+        [System.IO.File]::WriteAllLines($testPath, $lines, $utf8)
+    } else {
+        Write-Warning "$testPath not found."
     }
-    [System.IO.File]::WriteAllLines($testPath, $lines, $utf8)
-} else {
-    Write-Warning "$testPath not found."
 }
 
 Write-Host "Version bump completed successfully!"

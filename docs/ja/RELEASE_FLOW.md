@@ -47,7 +47,7 @@ sequenceDiagram
 リリースを公開するための標準的な手順は以下の通りです。
 
 ### 1. バージョンのバンプとプッシュ
-手動で `Cargo.toml` や `docs/SPEC.md` などのバージョン表記を更新し、`main` ブランチにコミットしてプッシュします。
+手動または `./scripts/bump-version.ps1 -NewVersion X.Y.Z` を用いて、`Cargo.toml`、`docs/ja/SPEC.md`、`docs/en/SPEC.md`、`docs/ja/TEST_REPORT.md`、`docs/en/TEST_REPORT.md` などのバージョン表記を更新し、`main` ブランチにコミットしてプッシュします。
 ```bash
 git commit -a -m "chore(release): release v1.0.0"
 git push origin main

@@ -2,6 +2,14 @@
 
 # Changelog
 
+## [1.1.1] - 2026-10-27
+### Fixed
+- **Startup Initialization Optimization**: Eliminated duplicate `Config` deserialization in `main.rs` that was redundant with `SystemMonitor::new`, streamlining direct access via `monitor.config`.
+- **Full Restoration of README Documentation**: Fully restored missing detailed sections across English and Japanese READMEs (Features, Monitored Metrics, Build steps, Settings, and comprehensive internal docs index).
+- **Format Normalization of LICENSE File**: Stripped UTF-8 BOM and ensured final newline compliance with `.editorconfig`.
+- **Multilingual Support for Version Bump Script**: Updated `scripts/bump-version.ps1` to detect and update specs and test reports across both `docs/ja/` and `docs/en/`.
+- **System Config & Documentation Synchronization**: Corrected typos in `.gitignore`, documented `vault-memo` in `RULES.md`, updated `INSTRUCTIONS.md` for modular architecture and doc sync rules, recorded MileStone 10 in `FOOTPRINTS.md`, and ensured strict vertical alignment for all Markdown tables.
+
 ## [1.1.0] - 2026-09-01
 ### Added
 - **Modular Architecture Refactoring**: Decoupled `src/main.rs` into specialized modules (`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`) adhering to the < 1,000 LOC guideline.
@@ -41,7 +49,7 @@
 - **Log Rotation Feature**: Added a feature to rotate CPU temperature diagnostic logs (`sensors_debug.log`) up to 3 generations at startup.
 - **Documentation**:
   - Created architecture document [ARCHITECTURE.md](ARCHITECTURE.md).
-  - Created AI instruction document [.agents/INSTRUCTIONS.md](../../.agents/INSTRUCTIONS.md).
+  - Created AI instruction document [INSTRUCTIONS.md](INSTRUCTIONS.md).
   - Created todo list [TODO.md](TODO.md).
 
 ### Fixed

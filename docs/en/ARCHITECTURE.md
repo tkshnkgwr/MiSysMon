@@ -9,7 +9,7 @@ This document describes the architectural design, modular organization, technolo
 ## 1. System Overview and Goals
 
 ### Overview
-Mini System Monitor (MiSysMon) is a slim, horizontal desktop overlay (1100px x 32px) designed for lightweight system monitoring.
+Mini System Monitor (MiSysMon) is a slim, horizontal desktop overlay (1210px x 32px with all items enabled, dynamically resized down to 200px minimum) designed for lightweight system monitoring.
 
 ### Goals
 - **Minimal Footprint**: Keep CPU and RAM overhead near zero so that gaming or low-resource computing is never impacted.
@@ -22,14 +22,14 @@ Mini System Monitor (MiSysMon) is a slim, horizontal desktop overlay (1100px x 3
 
 The project utilizes the following crates and libraries:
 
-| Layer / Library                    | Role                   | Rationale & Key Features                                                                             |
-| :--------------------------------- | :--------------------- | :--------------------------------------------------------------------------------------------------- |
-| **Rust** (Edition 2021)            | Programming Language   | High memory safety, zero-cost abstractions, low latency, and minimal resource footprint.             |
-| **egui / eframe** (0.35.0)         | GUI Framework          | Immediate Mode lightweight GUI. Efficient GPU/CPU rendering suited for sleek overlays.               |
-| **sysinfo** (0.38.0)               | System Metrics Engine  | OS-independent abstraction for CPU, memory, network, disk, and sensor telemetry.                     |
-| **chrono** (0.4.38)                | Time & Date            | Local timestamp querying and format rendering.                                                       |
-| **serde / serde_json**             | Serialization          | JSON persistence of window coordinates and user preferences.                                         |
-| **common_lib** (Local Crate)       | Shared Utilities       | Local workspace crate providing Named Mutex double-launch guards and byte formatting (`format_bytes`).|
+| Layer / Library                    | Role                   | Rationale & Key Features                                                                               |
+| :--------------------------------- | :--------------------- | :----------------------------------------------------------------------------------------------------- |
+| **Rust** (Edition 2021)            | Programming Language   | High memory safety, zero-cost abstractions, low latency, and minimal resource footprint.               |
+| **egui / eframe** (0.35.0)         | GUI Framework          | Immediate Mode lightweight GUI. Efficient GPU/CPU rendering suited for sleek overlays.                 |
+| **sysinfo** (0.38.0)               | System Metrics Engine  | OS-independent abstraction for CPU, memory, network, disk, and sensor telemetry.                       |
+| **chrono** (0.4.38)                | Time & Date            | Local timestamp querying and format rendering.                                                         |
+| **serde / serde_json**             | Serialization          | JSON persistence of window coordinates and user preferences.                                           |
+| **common_lib** (Local Crate)       | Shared Utilities       | Local workspace crate providing Named Mutex double-launch guards and byte formatting (`format_bytes`). |
 
 ---
 
@@ -39,21 +39,29 @@ The project utilizes the following crates and libraries:
 
 ```
 MiSysMon/
-├── .agents/            # AI agent instructions and governance
-│   ├── AGENTS.md       # Quality management and documentation rules
-│   └── INSTRUCTIONS.md # AI coding guidelines
-├── .github/            # GitHub Actions CI/CD workflows
-├── docs/               # Architecture, specs, and design documentation
-│   ├── ARCHITECTURE.md # This document
-│   ├── DEVELOPMENT.md  # Local development guide
-│   ├── DIAGRAM.md      # Mermaid diagrams
-│   ├── FOOTPRINTS.md   # Footprint benchmarks
-│   ├── RELEASE_FLOW.md # Release procedure guide
-│   ├── SPEC.md         # Specification document
-│   ├── TESTING.md      # Testing policies and procedures
-│   ├── TEST_REPORT.md  # Test results report
-│   └── TODO.md         # Task tracking and backlog
-├── scripts/            # Build and utility scripts
+├── .agents/            # AI agent instructions and specialized workflow skills
+│   ├── AGENTS.md       # Development guidelines and quality management rules
+│   └── skills/         # Workflow skill definitions (rust-verification, git-commit, markdown-table, etc.)
+├── .github/            # GitHub Actions CI/CD workflows and Dependabot
+├── docs/               # Architecture, specs, and design documentation (Bilingual en/ja)
+│   ├── en/             # English documentation suite
+│   │   ├── ARCHITECTURE.md           # This document (Design & Architecture)
+│   │   ├── CHANGELOG.md              # Change log
+│   │   ├── CONTRIBUTING.md           # Contribution guidelines
+│   │   ├── DEVELOPMENT.md            # Multi-repository local development guide
+│   │   ├── DIAGRAM.md                # System Mermaid diagrams
+│   │   ├── FOOTPRINTS.md             # Development milestones & footprint benchmarks
+│   │   ├── INSTRUCTIONS.md           # AI coding guidelines & doc sync rules
+│   │   ├── PROJECT_TEMPLATE_GUIDE.md # New project template guide
+│   │   ├── RELEASE.md                # Release procedure manual
+│   │   ├── RELEASE_FLOW.md           # GitHub Actions release workflow guide
+│   │   ├── SECURITY.md               # Security policy
+│   │   ├── SPEC.md                   # Product specification document
+│   │   ├── TESTING.md                # Testing policies and procedures
+│   │   ├── TEST_REPORT.md            # Test results report
+│   │   └── TODO.md                   # Task tracking and backlog
+│   └── ja/             # Japanese documentation suite (mirrors docs/en/)
+├── scripts/            # Build and version bump scripts (bump-version.ps1)
 ├── src/                # Modular source code
 │   ├── config.rs       # App configuration, defaults, serde persistence
 │   ├── monitor.rs      # Telemetry polling, log rotation, history queue
@@ -61,7 +69,12 @@ MiSysMon/
 │   ├── win32.rs        # Win32 API integration, window auto-snapping
 │   └── main.rs         # App entry point, eframe::App implementation
 ├── Cargo.toml          # Rust package manifest
-└── CHANGELOG.md        # Change log
+├── CHANGELOG.md        # Changelog pointer (links to docs/en and docs/ja)
+├── CLAUDE.md           # Top-priority rules for Claude
+├── GEMINI.md           # Top-priority rules for Gemini (Daikenja)
+├── README.md           # Project overview (English)
+├── README_JA.md        # Project overview (Japanese)
+└── RULES.md            # Global mandatory rules for all AI agents
 ```
 
 ### Module Responsibilities

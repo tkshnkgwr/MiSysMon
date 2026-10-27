@@ -47,7 +47,7 @@ sequenceDiagram
 Standard procedures to publish a release are as follows:
 
 ### 1. Version Bump and Push
-Manually update version values in `Cargo.toml`, `docs/ja/SPEC.md`, `docs/en/SPEC.md`, etc., commit to `main`, and push:
+Manually or via `./scripts/bump-version.ps1 -NewVersion X.Y.Z`, update version values in `Cargo.toml`, `docs/ja/SPEC.md`, `docs/en/SPEC.md`, `docs/ja/TEST_REPORT.md`, `docs/en/TEST_REPORT.md`, etc., commit to `main`, and push:
 ```bash
 git commit -a -m "chore(release): release v1.0.0"
 git push origin main

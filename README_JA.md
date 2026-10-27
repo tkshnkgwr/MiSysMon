@@ -12,7 +12,7 @@
 
 |     CPU     |   CPU GRAPH   |  MEM  |   MEM GRAPH   |      NET      |   DISK    |      IO       |   VER   |          CLOCK           |
 | :---------: | :-----------: | :---: | :-----------: | :-----------: | :-------: | :-----------: | :-----: | :----------------------: |
-| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.1.0  | 2026/09/01(Tue) 13:45:00 |
+| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.1.1  | 2026/09/01(Tue) 13:45:00 |
 
 ## 🌟 特徴
 
@@ -43,6 +43,9 @@
 
 ### ビルド手順
 ```powershell
+# 共有ライブラリのクローン（同じ親ディレクトリに並べて配置）
+git clone https://github.com/tkshnkgwr/common_lib.git
+
 # リポジトリのクローン
 git clone https://github.com/tkshnkgwr/MiSysMon.git
 cd MiSysMon
@@ -85,14 +88,20 @@ Windowsのセキュリティ制限（WMIアクセス許可）や、お使いの�
 開発者や詳細な動作を確認したい管理者向けに、以下のガイドラインを用意しています。
 - [機能仕様書](./docs/ja/SPEC.md): 製品の機能一覧と技術スタックの定義。
 - [システム設計・アーキテクチャ](./docs/ja/ARCHITECTURE.md): 内部モジュール設計、データフロー、ディレクトリ構造の意図。
+- [システム構成図 (Diagram)](./docs/ja/DIAGRAM.md): システム構成およびデータフローのMermaid図。
 - [テスト方針・実行ガイド](./docs/ja/TESTING.md): ユニットテスト方針とモジュール別検証項目。
 - [テスト結果報告書](./docs/ja/TEST_REPORT.md): 動作検証結果とパフォーマンス記録。
 - [マルチリポジトリ開発ガイド](./docs/ja/DEVELOPMENT.md): `common_lib` と並行したローカル開発環境の構築手順。
-- [リリース・バージョン管理手順書](./docs/ja/RELEASE_FLOW.md): GitHub Actionsによる自動リリースとPATの設定方法。
+- [リリース手順書](./docs/ja/RELEASE.md): バージョン更新およびリリース作業の手順マニュアル。
+- [リリース・バージョン管理フロー手順書](./docs/ja/RELEASE_FLOW.md): GitHub Actionsによる自動リリースとトラブルシューティング。
+- [貢献ガイドライン](./docs/ja/CONTRIBUTING.md): バグ報告、機能提案、プルリクエスト提出時のガイドライン。
+- [セキュリティポリシー](./docs/ja/SECURITY.md): セキュリティ方針、サポート対象バージョン、脆弱性報告手順。
 - [AI指示書（コーディング規約）](./docs/ja/INSTRUCTIONS.md): AIエージェント（大賢者）がコード変更時に遵守すべき規約。
 - [開発変遷・パフォーマンス記録 (Footprints)](./docs/ja/FOOTPRINTS.md): 開発マイルストーンと動作フットプリントの変遷。
+- [変更履歴 (Changelog)](./docs/ja/CHANGELOG.md): バージョンごとの詳細な変更履歴。
 - [開発タスクリスト (Todo)](./docs/ja/TODO.md): 実装タスクと今後のロードマップ。
 - [プロジェクトテンプレートガイド](./docs/ja/PROJECT_TEMPLATE_GUIDE.md): 新規Rustデスクトップアプリ開発の黄金ひな形。
 
 ## 📄 ライセンス
-MIT License (詳細は [LICENSE](./LICENSE) を参照してください)
+
+本プロジェクトは MIT License のもとで公開されています - Copyright (c) 2026 tkshnkgwr。詳細は [LICENSE](./LICENSE) をご覧ください。

@@ -9,7 +9,7 @@
 ## 1. システムの概要と目的
 
 ### 概要
-Mini System Monitor (MiSysMon) は、画面上に常駐する横長スリム型（1100px x 32px）の軽量システムモニターです。
+Mini System Monitor (MiSysMon) は、画面上に常駐する横長スリム型（全項目表示時 1210px x 32px、最小 200px まで動的リサイズ）の軽量システムモニターです。
 
 ### 目的
 - **最小限のフットプリント**: 低スペックなPCやゲーム実行中などの環境を阻害しないよう、メモリ使用量とCPU使用率を極限まで低く保ちます。
@@ -39,21 +39,29 @@ Mini System Monitor (MiSysMon) は、画面上に常駐する横長スリム型�
 
 ```
 MiSysMon/
-├── .agents/            # AIエージェント用の指示書とルール
-│   ├── AGENTS.md       # 自動ドキュメンテーションと品質管理ルール
-│   └── INSTRUCTIONS.md # AIがコード変更時に遵守すべきコーディングルール
-├── .github/            # GitHub Actions ワークフロー設定
-├── docs/               # プロジェクト仕様・設計書などの各種ドキュメント
-│   ├── ARCHITECTURE.md # 本ファイル (設計・アーキテクチャ)
-│   ├── DEVELOPMENT.md  # 開発手順書
-│   ├── DIAGRAM.md      # システム図 (Mermaid)
-│   ├── FOOTPRINTS.md   # バイナリサイズとメモリフットプリントの記録
-│   ├── RELEASE_FLOW.md # リリース手順書
-│   ├── SPEC.md         # 機能および外観の仕様書
-│   ├── TESTING.md      # テスト方針・実行手順書
-│   ├── TEST_REPORT.md  # テスト結果報告書
-│   └── TODO.md         # 進捗管理およびタスク
-├── scripts/            # ビルドおよび配信用スクリプト
+├── .agents/            # AIエージェント用の指示書とスキル定義
+│   ├── AGENTS.md       # 開発ガイドライン・品質管理ルール
+│   └── skills/         # 専門ワークフロースキル定義 (rust-verification, git-commit, markdown-table 等)
+├── .github/            # GitHub Actions ワークフロー設定および Dependabot
+├── docs/               # プロジェクト仕様・設計書などの各種ドキュメント (日英2言語構成)
+│   ├── en/             # 英語版ドキュメント群
+│   └── ja/             # 日本語版ドキュメント群
+│       ├── ARCHITECTURE.md           # 本ファイル (設計・アーキテクチャ)
+│       ├── CHANGELOG.md              # 変更履歴
+│       ├── CONTRIBUTING.md           # 貢献ガイドライン
+│       ├── DEVELOPMENT.md            # マルチリポジトリ開発手順書
+│       ├── DIAGRAM.md                # システム構成図 (Mermaid)
+│       ├── FOOTPRINTS.md             # 開発マイルストーンとフットプリント記録
+│       ├── INSTRUCTIONS.md           # AIコーディング規約・ドキュメント同期ルール
+│       ├── PROJECT_TEMPLATE_GUIDE.md # 新規プロジェクト用テンプレートガイド
+│       ├── RELEASE.md                # リリース作業マニュアル
+│       ├── RELEASE_FLOW.md           # GitHub Actions リリースフロー手順書
+│       ├── SECURITY.md               # セキュリティポリシー
+│       ├── SPEC.md                   # 機能および外観の仕様書
+│       ├── TESTING.md                # テスト方針・実行手順書
+│       ├── TEST_REPORT.md            # テスト結果報告書
+│       └── TODO.md                   # 進捗管理およびタスクバックログ
+├── scripts/            # ビルドおよびバージョン一括更新スクリプト (bump-version.ps1)
 ├── src/                # ソースコード（モジュール分割設計）
 │   ├── config.rs       # 設定構造体、デフォルト値、serde永続化
 │   ├── monitor.rs      # システムメトリクス取得、ログ世代交代、履歴管理
@@ -61,7 +69,12 @@ MiSysMon/
 │   ├── win32.rs        # Win32 API連携、画面端オートスナップ計算
 │   └── main.rs         # アプリケーションエントリーポイント、eframe::App実装
 ├── Cargo.toml          # Rust依存パッケージ設定
-└── CHANGELOG.md        # 変更履歴
+├── CHANGELOG.md        # 変更履歴ポインタ (docs/en, docs/ja への案内)
+├── CLAUDE.md           # Claude 向け最優先ルール定義
+├── GEMINI.md           # Gemini (大賢者) 向け最優先ルール定義
+├── README.md           # プロジェクト概要 (英語版)
+├── README_JA.md        # プロジェクト概要 (日本語版)
+└── RULES.md            # 全AIエージェント共通の絶対遵守ルール
 ```
 
 ### モジュール構造と役割分担
