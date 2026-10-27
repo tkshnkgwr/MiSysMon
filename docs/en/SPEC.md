@@ -2,8 +2,8 @@
 
 # Specification: Mini System Monitor
 
-**Version**: 1.1.1
-**Internal Version**: 1.1.1.0
+**Version**: 1.2.0
+**Internal Version**: 1.2.0.0
 
 ## 1. Overview
 An extremely lightweight system monitor designed to run on Windows in low-resource environments.

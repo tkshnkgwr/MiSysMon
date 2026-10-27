@@ -2,7 +2,7 @@
 
 # Test Report: Mini System Monitor (MiSysMon)
 
-**適合バージョン**: mini-system-monitor v1.1.1
+**適合バージョン**: mini-system-monitor v1.2.0
 
 ## 1. テスト環境
 - **OS:** Windows 11 / Windows 10

@@ -2,6 +2,10 @@
 
 # Changelog
 
+## [1.2.0] - 2026-10-27
+### Changed
+- **ライセンスの変更**: ソフトウェアライセンスを MIT License から **GNU General Public License v3.0 or later (GPL-3.0-or-later)** に変更。`Cargo.toml` にライセンスメタデータを明記し、`README.md` / `README_JA.md` のバッジおよび表記を同期更新。
+
 ## [1.1.1] - 2026-10-27
 ### Fixed
 - **起動時初期化処理の最適化**: `main.rs` 内で `Config` のデシリアライズが `SystemMonitor::new` と重複して2重実行されていた処理を解消し、`monitor.config` を直接参照するよう整理。

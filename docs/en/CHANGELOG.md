@@ -2,6 +2,10 @@
 
 # Changelog
 
+## [1.2.0] - 2026-10-27
+### Changed
+- **License Migration**: Changed software license from MIT License to **GNU General Public License v3.0 or later (GPL-3.0-or-later)**. Added explicit license metadata to `Cargo.toml` and synchronized badges and descriptions in `README.md` / `README_JA.md`.
+
 ## [1.1.1] - 2026-10-27
 ### Fixed
 - **Startup Initialization Optimization**: Eliminated duplicate `Config` deserialization in `main.rs` that was redundant with `SystemMonitor::new`, streamlining direct access via `monitor.config`.

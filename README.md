@@ -2,7 +2,7 @@
 
 📖 [日本語版はこちら (Japanese Version)](./README_JA.md)
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-1.80%2B-orange.svg)
 [![CI](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml)
@@ -12,7 +12,7 @@ An ultra-lightweight, ultra-slim desktop system monitor optimized for low-resour
 
 |     CPU     |   CPU GRAPH   |  MEM  |   MEM GRAPH   |      NET      |   DISK    |      IO       |   VER   |          CLOCK           |
 | :---------: | :-----------: | :---: | :-----------: | :-----------: | :-------: | :-----------: | :-----: | :----------------------: |
-| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.1.1  | 2026/09/01(Tue) 13:45:00 |
+| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.2.0  | 2026/09/01(Tue) 13:45:00 |
 
 ## 🌟 Features
 
@@ -104,4 +104,4 @@ For developers or advanced administrators, check out the following internal guid
 
 ## 📄 License
 
-This project is licensed under the MIT License - Copyright (c) 2026 tkshnkgwr. See the [LICENSE](./LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 or later (GPL-3.0-or-later) - Copyright (c) 2026 tkshnkgwr. See the [LICENSE](LICENSE) file for details.

@@ -2,7 +2,7 @@
 
 📖 [English Version](./README.md)
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-blue.svg)
 ![Rust](https://img.shields.io/badge/rust-1.80%2B-orange.svg)
 [![CI](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml/badge.svg)](https://github.com/tkshnkgwr/MiSysMon/actions/workflows/ci.yml)
@@ -12,7 +12,7 @@
 
 |     CPU     |   CPU GRAPH   |  MEM  |   MEM GRAPH   |      NET      |   DISK    |      IO       |   VER   |          CLOCK           |
 | :---------: | :-----------: | :---: | :-----------: | :-----------: | :-------: | :-----------: | :-----: | :----------------------: |
-| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.1.1  | 2026/09/01(Tue) 13:45:00 |
+| 5.1% (42°C) | [ ▅▆▇▃▂  ]   | 12.3% | [ ▂▄▅▃   ]   | 1.2M^ / 0.8Mv | 123G/512G | 0.5MR / 0.1MW | v1.2.0  | 2026/09/01(Tue) 13:45:00 |
 
 ## 🌟 特徴
 
@@ -104,4 +104,4 @@ Windowsのセキュリティ制限（WMIアクセス許可）や、お使いの�
 
 ## 📄 ライセンス
 
-本プロジェクトは MIT License のもとで公開されています - Copyright (c) 2026 tkshnkgwr。詳細は [LICENSE](./LICENSE) をご覧ください。
+本プロジェクトは GNU General Public License v3.0 or later (GPL-3.0-or-later) のもとで公開されています - Copyright (c) 2026 tkshnkgwr。詳細は [LICENSE](LICENSE) をご覧ください。
