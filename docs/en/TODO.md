@@ -60,7 +60,10 @@ This document tracks the development status, immediate tasks, and future backlog
 
 ## 2. Immediate Tasks (In Progress / Todo)
 
-- No outstanding tasks.
+- [ ] **Normalize Network and Disk I/O Transfer Speeds by Interval (B/s)**:
+  - When the update interval is configured between 0.5s and 5.0s, ensure displayed network traffic and disk I/O metrics are correctly normalized to transfer rate per second (B/s) rather than raw interval aggregate bytes.
+- [ ] **Refine CPU Temperature Sensor Detection Precedence**:
+  - Prioritize dedicated CPU sensor keywords (`CPU`, `CORE`, `PACKAGE`, `TCTL`, `TDIE`) first, using a 2-stage fallback to prevent misidentifying ambient motherboard/drive thermal sensors (`THM`, `TEMP`) as CPU temperature.
 
 ---
 
@@ -70,6 +73,14 @@ This document tracks the development status, immediate tasks, and future backlog
   - Highlight metrics/sparklines with alert colors (orange to red) when CPU usage exceeds 90% or CPU temperature exceeds 80°C.
 - [ ] **Custom Color Themes & Accent Options**:
   - Allow user customization of text color, sparkline color (cyan, green, magenta, orange), and background opacity through the settings dialog.
+- [ ] **Reset to Default Settings**:
+  - Add a "Reset to Defaults" button inside the settings panel to quickly restore window coordinates, opacity, interval, and component visibility.
+- [ ] **Immediate Configuration Persistence**:
+  - Persist modified settings to storage immediately upon changes or dialog close, improving fault tolerance against sudden process termination.
+- [ ] **Memory Usage Capacity Display (in GB)**:
+  - Add an option or tooltip to show memory usage in gigabytes (e.g. `7.8GB/16.0GB`) alongside or in place of percentage.
+- [ ] **Clock Display Formatting Customization**:
+  - Provide formatting options in settings to toggle seconds, switch between 12/24-hour clocks, and customize date/day displays.
 - [ ] **Top Resource-Consuming Process Tooltips**:
   - Display tooltips showing the top 3 processes by CPU, Memory, and Disk I/O consumption when hovering over metric labels.
 - [ ] **System Tray Minimization & Global Toggle Hotkey**:

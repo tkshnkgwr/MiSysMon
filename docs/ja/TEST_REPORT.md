@@ -7,7 +7,7 @@
 ## 1. テスト環境
 - **OS:** Windows 11 / Windows 10
 - **Rust Toolchain:** 1.80+ (stable-x86_64-pc-windows-msvc)
-- **主要クレート:** eframe 0.35.0, sysinfo 0.38.0, chrono 0.4.38, serde 1.0.203, common_lib 0.3.0
+- **主要クレート:** eframe 0.35.0, sysinfo 0.38.0, chrono 0.4.38, serde 1.0.203, common_lib 0.4.0
 
 ---
 

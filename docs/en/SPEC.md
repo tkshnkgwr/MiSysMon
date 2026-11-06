@@ -35,7 +35,7 @@ It stays always-on-top and monitors system resources in real-time (at 1-second i
 - **Double-Launch Prevention**: Implemented via standard Win32 Named Mutex wrapper in `common_lib`. If another instance is running, the new process exits immediately.
 - **Log Rotation:** Diagnostic logs `sensors_debug.log` are rotated up to 3 generations (`.1`, `.2`, `.3`) at startup to restrict disk consumption. Adds advice to run with admin privileges if 0 sensors are detected.
 - **Auto-Snap**: Snaps to desktop work area edges (top, bottom, left, right) automatically when dragged within 15px. Can be toggled on/off in settings.
-- **Mini Trendline**: Displays a 30-second history of CPU and Memory usage as 12px height sparklines (line charts).
+- **Mini Trendline**: Displays recent 30 samples (30 seconds when update interval is 1.0s) of CPU and Memory usage as 12px height sparklines (line charts).
 - **Configuration Panel**: Double-clicking the handle (`=`) or right-clicking the main window opens a settings window on top. It automatically displays on the same monitor as the main window. Modifiable settings: update interval (0.5s–5.0s), background opacity (0.3–1.0), auto-snap toggle, and visibility checkboxes for CPU, Memory, Network, Disk, IO, Version, and Clock.
 - **Dynamic Resize**: Automatically calculates the required width and resizes the main window dynamically when items are toggled on/off.
 - **Usability:** Disables text selection to prevent misclicks.
