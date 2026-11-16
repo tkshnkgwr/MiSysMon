@@ -60,6 +60,11 @@
 
 ## 2. 直近のタスク (In Progress / Todo)
 
+- [ ] **【最優先・省メモリ化】 `eframe` バックエンドを既定 `wgpu` から `glow` (OpenGL) へ切り替え (`Cargo.toml`)**:
+  - **背景**: `eframe = "0.35.0"` から `default` feature に `wgpu` が含まれるようになり、`MiSysMon` でも起動時に DX12 / Vulkan / DXC シェーダコンパイラ等の巨大 DLL がロードされてしまう（同環境 `eframe 0.37` の検証で `wgpu` 293.06 MB → `glow` 68.45 MB へ **-224.61 MB** 削減を確認済み）。
+  - [ ] `Cargo.toml` を `eframe = { version = "0.35.0", default-features = false, features = ["glow", "default_fonts", "persistence"] }` 構成へ変更する（必要に応じて最小限の feature を維持）。
+  - [ ] リリースビルドで背景透過・スパークライングラフ・オートスナップ・設定サブビューポート等の描画・動作に問題がないか検証する。
+  - [ ] 切り替え前後の `Private Memory` / `WorkingSet` を実測比較して効果を記録する。
 - [ ] **更新間隔に応じたネットワーク・ディスクI/O速度の秒速正規化 (B/s)**:
   - 設定画面で更新間隔（0.5s〜5.0s）を変更した際、表示される通信量およびディスクI/O速度が「区間合計バイト数」ではなく「1秒あたりの転送速度（B/s）」として正しく正規化されるように修正。
 - [ ] **CPU温度センサー取得の優先順位厳格化**:

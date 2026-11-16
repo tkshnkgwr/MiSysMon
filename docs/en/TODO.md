@@ -60,6 +60,11 @@ This document tracks the development status, immediate tasks, and future backlog
 
 ## 2. Immediate Tasks (In Progress / Todo)
 
+- [ ] **Switch `eframe` Backend from Default `wgpu` to `glow` (OpenGL) for Memory Reduction (`Cargo.toml`)**:
+  - **Background**: Starting from `eframe 0.35.0`, `default` features include `wgpu` instead of `glow`, causing heavy DX12/Vulkan/shader compiler DLLs to be loaded at startup (verified in `clondar-native` benchmarks: `wgpu` 293.06 MB $\to$ `glow` 68.45 MB, **-224.61 MB** reduction).
+  - [ ] Update `Cargo.toml` to `eframe = { version = "0.35.0", default-features = false, features = ["glow", "default_fonts", "persistence"] }` (keeping only minimal required features).
+  - [ ] Verify transparent bar rendering, sparkline charts, window auto-snap, and the settings sub-viewport in release build.
+  - [ ] Measure Private Memory and WorkingSet before and after switching to document the reduction.
 - [ ] **Normalize Network and Disk I/O Transfer Speeds by Interval (B/s)**:
   - When the update interval is configured between 0.5s and 5.0s, ensure displayed network traffic and disk I/O metrics are correctly normalized to transfer rate per second (B/s) rather than raw interval aggregate bytes.
 - [ ] **Refine CPU Temperature Sensor Detection Precedence**:
