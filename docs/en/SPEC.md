@@ -2,15 +2,15 @@
 
 # Specification: Mini System Monitor
 
-**Version**: 1.2.0
-**Internal Version**: 1.2.0.0
+**Version**: 1.3.0
+**Internal Version**: 1.3.0.0
 
 ## 1. Overview
 An extremely lightweight system monitor designed to run on Windows in low-resource environments.
 It stays always-on-top and monitors system resources in real-time (at 1-second intervals by default, configurable from 0.5s to 5.0s).
 
 ## 2. Technical Stack
-- **Production:** Rust (Edition 2021), egui / eframe (0.35.0), sysinfo (0.38.0), chrono (0.4.38), serde / serde_json, common_lib (local shared crate)
+- **Production:** Rust (Edition 2021), egui / eframe (0.35.0, `glow` OpenGL backend), sysinfo (0.38.0), chrono (0.4.38), serde / serde_json, common_lib (local shared crate)
 - **Architecture:** Modular codebase design (`config`, `monitor`, `ui`, `win32`, `main`)
 
 ## 3. Visual Specifications
@@ -36,7 +36,7 @@ It stays always-on-top and monitors system resources in real-time (at 1-second i
 - **Log Rotation:** Diagnostic logs `sensors_debug.log` are rotated up to 3 generations (`.1`, `.2`, `.3`) at startup to restrict disk consumption. Adds advice to run with admin privileges if 0 sensors are detected.
 - **Auto-Snap**: Snaps to desktop work area edges (top, bottom, left, right) automatically when dragged within 15px. Can be toggled on/off in settings.
 - **Mini Trendline**: Displays recent 30 samples (30 seconds when update interval is 1.0s) of CPU and Memory usage as 12px height sparklines (line charts).
-- **Configuration Panel**: Double-clicking the handle (`=`) or right-clicking the main window opens a settings window on top. It automatically displays on the same monitor as the main window. Modifiable settings: update interval (0.5s–5.0s), background opacity (0.3–1.0), auto-snap toggle, and visibility checkboxes for CPU, Memory, Network, Disk, IO, Version, and Clock.
+- **Configuration Panel**: Double-clicking the handle (`=`) or right-clicking the main window temporarily expands the main window (height 475px, min width 300px) to display an inline settings panel. Automatically clamps position within the monitor work area when opened near screen edges and restores the original position upon closing. Modifiable settings: update interval (0.5s–5.0s), background opacity (0.3–1.0), auto-snap toggle, and visibility checkboxes for CPU, Memory, Network, Disk, IO, Version, and Clock.
 - **Dynamic Resize**: Automatically calculates the required width and resizes the main window dynamically when items are toggled on/off.
 - **Usability:** Disables text selection to prevent misclicks.
 

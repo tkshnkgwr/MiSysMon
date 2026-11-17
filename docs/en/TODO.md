@@ -38,33 +38,32 @@ This document tracks the development status, immediate tasks, and future backlog
   - Snaps to desktop work area borders automatically when dragged within 15px (implemented via Win32 APIs).
 - [x] **Resource Usage Charts (Mini Trendlines)**:
   - Added cyan sparklines (12px height line charts) representing the last 30 seconds of CPU and Memory telemetry data.
-- [x] **Config Customization Panel**:
-  - Double-clicking the grip (`=`) or right-clicking the main window displays a separate config dialog (sub-viewport).
+- [x] **Config Customization Panel (Single-Window Expanded UI)**:
+  - Double-clicking the grip (`=`) or right-clicking the main window temporarily expands the root window to display an inline settings panel (completely avoiding `glow` multi-viewport destruction issues).
   - Customizable items: update interval (0.5s–5.0s), window opacity (30%–100%), auto-snap toggle, and visibility checkboxes for CPU, Memory, Network, Disk, Disk IO, Version, and Clock.
   - Dynamic window width resizing to eliminate empty spaces when items are toggled.
 - [x] **Absolute Screen Coordinate Dragging**:
   - Resolved dragging jitter/cursor drift by locking coordinates via Win32 API `GetCursorPos` delta tracking.
-- [x] **Config Panel Display Placement in Multi-Monitor Environments**:
-  - Fixed config panel coordinates to open on the same monitor as the main window by setting `.with_position()` relative to the main window.
+- [x] **Config Panel Display Placement & Boundary Clamping in Multi-Monitor Environments**:
+  - Clamps window coordinates within the active monitor work area (`rc_work`) when expanding the settings panel near screen edges, automatically restoring the original bar position when closed.
 - [x] **Dynamic Width Calculations & Layout Fixes**:
   - Refined required width metrics for each component in `calculate_window_width()` to prevent overlapping elements.
-  - Optimized calls to `ViewportCommand::InnerSize` to fire only on width changes.
+  - Optimized calls to `ViewportCommand::InnerSize` to fire only on size changes.
 - [x] **Modular Architecture Refactoring**:
   - Decoupled single-file codebase into specialized modules (`config.rs`, `monitor.rs`, `ui.rs`, `win32.rs`, `main.rs`).
   - Enforced the < 1,000 LOC rule per file for high maintainability and clear separation of concerns.
 - [x] **Comprehensive RustDoc & Test Suite Expansion**:
   - Enriched API documentation with accessible explanations, parameter/return details, and safety guarantees.
-  - Expanded unit test coverage from 1 to 15 tests (serialization roundtrip, partial fallback, snap boundary checks, dynamic width calculation, log succession, history queue capping, and saturating arithmetic).
+  - Expanded unit test coverage from 1 to 16 tests (serialization roundtrip, partial fallback, snap boundary checks, dynamic width and expanded size calculation, log succession, history queue capping, and saturating arithmetic).
+- [x] **Switch `eframe` Backend from Default `wgpu` to `glow` (OpenGL) for Memory Reduction (`Cargo.toml` / `src/main.rs`)**:
+  - Updated `Cargo.toml` to minimal features `eframe = { version = "0.35.0", default-features = false, features = ["default_fonts", "glow", "persistence"] }` and explicitly set `Renderer::Glow` in `eframe::NativeOptions`.
+  - Replaced `show_viewport_immediate` with single-window temporary height expansion for the settings UI to avoid `glow` multi-viewport context teardown issues.
+  - Verified release build benchmarks: **Private Memory reduced from 292.06 MB to 54.53 MB (-237.53 MB / -81.3%)**, **WorkingSet reduced from 333.12 MB to 101.14 MB (-231.98 MB / -69.6%)**, and **binary size reduced from 8.26 MB to 5.64 MB (-2.62 MB / -31.8%)**.
 
 ---
 
 ## 2. Immediate Tasks (In Progress / Todo)
 
-- [ ] **Switch `eframe` Backend from Default `wgpu` to `glow` (OpenGL) for Memory Reduction (`Cargo.toml`)**:
-  - **Background**: Starting from `eframe 0.35.0`, `default` features include `wgpu` instead of `glow`, causing heavy DX12/Vulkan/shader compiler DLLs to be loaded at startup (verified in `clondar-native` benchmarks: `wgpu` 293.06 MB $\to$ `glow` 68.45 MB, **-224.61 MB** reduction).
-  - [ ] Update `Cargo.toml` to `eframe = { version = "0.35.0", default-features = false, features = ["glow", "default_fonts", "persistence"] }` (keeping only minimal required features).
-  - [ ] Verify transparent bar rendering, sparkline charts, window auto-snap, and the settings sub-viewport in release build.
-  - [ ] Measure Private Memory and WorkingSet before and after switching to document the reduction.
 - [ ] **Normalize Network and Disk I/O Transfer Speeds by Interval (B/s)**:
   - When the update interval is configured between 0.5s and 5.0s, ensure displayed network traffic and disk I/O metrics are correctly normalized to transfer rate per second (B/s) rather than raw interval aggregate bytes.
 - [ ] **Refine CPU Temperature Sensor Detection Precedence**:

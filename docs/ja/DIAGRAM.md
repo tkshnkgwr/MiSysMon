@@ -16,7 +16,7 @@ graph TD
         CH[chrono]
         UI[egui Renderer]
         CL[common_lib]
-        SET[Settings Viewport]
+        SET[Inline Settings Panel]
         CONF[Config JSON File]
         
         APP -->|Interval Metric Fetch| SI

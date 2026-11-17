@@ -2,6 +2,11 @@
 
 # Changelog
 
+## [1.3.0] - 2026-11-17
+### Optimized
+- **`eframe` 描画バックエンドを `wgpu` から `glow` (OpenGL) へ移行し大幅な省メモリ化を達成**: `Cargo.toml` の `eframe (0.35.0)` を `default-features = false, features = ["default_fonts", "glow", "persistence"]` の最小構成に変更し、`eframe::NativeOptions` で `Renderer::Glow` を明示指定。これにより、Private Memory を **292.06 MB → 54.53 MB (-81.3% / -237.53 MB)**、Working Set を **333.12 MB → 101.14 MB (-69.6% / -231.98 MB)**、リリース単一バイナリを **8.26 MB → 5.64 MB (-31.8% / -2.62 MB)** へ大幅削減。
+- **設定カスタマイズ画面の単一ウィンドウ内展開方式への刷新**: `eframe 0.35.0` (`glow` バックエンド) におけるマルチビューポート破棄時の不具合を回避するため、`show_viewport_immediate` による別ウィンドウ生成を廃止し、メインウィンドウの一時拡大（高さ 475px、最小幅 300px）による同一ルートウィンドウ内展開UIへ移行。画面下端・右端付近での展開時にはモニター作業領域内へ一時クランプ補正し、閉じた際に元のバー位置へ自動復帰する制御およびユニットテスト（計16件）を追加。
+
 ## [1.2.0] - 2026-10-27
 ### Changed
 - **ライセンスの変更**: ソフトウェアライセンスを MIT License から **GNU General Public License v3.0 or later (GPL-3.0-or-later)** に変更。`Cargo.toml` にライセンスメタデータを明記し、`README.md` / `README_JA.md` のバッジおよび表記を同期更新。

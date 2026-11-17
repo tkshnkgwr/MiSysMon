@@ -25,7 +25,7 @@ The project utilizes the following crates and libraries:
 | Layer / Library                    | Role                   | Rationale & Key Features                                                                               |
 | :--------------------------------- | :--------------------- | :----------------------------------------------------------------------------------------------------- |
 | **Rust** (Edition 2021)            | Programming Language   | High memory safety, zero-cost abstractions, low latency, and minimal resource footprint.               |
-| **egui / eframe** (0.35.0)         | GUI Framework          | Immediate Mode lightweight GUI. Efficient GPU/CPU rendering suited for sleek overlays.                 |
+| **egui / eframe** (0.35.0, `glow`) | GUI Framework          | Immediate Mode lightweight GUI using the minimal OpenGL (`glow`) backend for low memory footprint.     |
 | **sysinfo** (0.38.0)               | System Metrics Engine  | OS-independent abstraction for CPU, memory, network, disk, and sensor telemetry.                       |
 | **chrono** (0.4.38)                | Time & Date            | Local timestamp querying and format rendering.                                                         |
 | **serde / serde_json**             | Serialization          | JSON persistence of window coordinates and user preferences.                                           |
@@ -130,12 +130,13 @@ MiSysMon/
         - Render mini sparkline trendlines
         - Custom drag & Win32 WorkArea auto-snap
         - Clock display (chrono) / Close button (×)
-        - Right-click / Double-click ──> Config Viewport
+        - Right-click / Double-click ──> Inline Settings Panel Expansion
 ```
 
-### C. Configuration Customization (Sub-Viewport)
+### C. Configuration Customization (Single-Window Inline Expansion)
+- To avoid OpenGL context teardown bugs with secondary viewports in `eframe` (`glow`), the settings UI temporarily expands the root window (475px height, 300px min width) instead of spawning a separate OS viewport (`show_viewport_immediate`).
 - Real-time reactivity: UI settings apply immediately to the main overlay.
-- Dynamic resizing: Toggling metric items re-evaluates `calculate_window_width()` and updates the window width dynamically.
+- Dynamic resizing: Toggling metric items re-evaluates `calculate_window_size()` and updates the window dimensions dynamically.
 
 ### D. Diagnostic Telemetry & Log Rotation
 - During startup (`SystemMonitor::new`), detected sensors are logged to `sensors_debug.log`.

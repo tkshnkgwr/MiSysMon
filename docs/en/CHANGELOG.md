@@ -2,6 +2,11 @@
 
 # Changelog
 
+## [1.3.0] - 2026-11-17
+### Optimized
+- **Switched `eframe` Rendering Backend from `wgpu` to `glow` (OpenGL) for Major Memory Reduction**: Updated `eframe (0.35.0)` in `Cargo.toml` to minimal features (`default-features = false, features = ["default_fonts", "glow", "persistence"]`) and explicitly specified `Renderer::Glow` in `eframe::NativeOptions`. Reduced Private Memory from **292.06 MB to 54.53 MB (-81.3% / -237.53 MB)**, Working Set from **333.12 MB to 101.14 MB (-69.6% / -231.98 MB)**, and release binary size from **8.26 MB to 5.64 MB (-31.8% / -2.62 MB)**.
+- **Refactored Settings Screen to Single-Window Inline Expansion**: Replaced `show_viewport_immediate` with temporary root-window expansion (height 475px, min width 300px) to eliminate multi-viewport OpenGL context teardown issues in `eframe 0.35.0` (`glow`). Added automatic monitor work-area boundary clamping when expanding near screen edges with position restoration upon close, along with unit tests (16 tests total).
+
 ## [1.2.0] - 2026-10-27
 ### Changed
 - **License Migration**: Changed software license from MIT License to **GNU General Public License v3.0 or later (GPL-3.0-or-later)**. Added explicit license metadata to `Cargo.toml` and synchronized badges and descriptions in `README.md` / `README_JA.md`.

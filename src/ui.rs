@@ -6,6 +6,28 @@
 use crate::config::Config;
 use eframe::egui;
 
+/// 通常時のスリムバーの高さ（px）。
+pub const BAR_HEIGHT: f32 = 32.0;
+
+/// 設定パネル展開時の最小ウィンドウ幅（px）。
+pub const SETTINGS_MIN_WIDTH: f32 = 300.0;
+
+/// 設定パネル展開時のウィンドウ高さ（px）。
+pub const SETTINGS_EXPANDED_HEIGHT: f32 = 475.0;
+
+/// 現在の設定および設定パネルの開閉状態に基づいて、必要なメインウィンドウのサイズ `(幅, 高さ)` を計算します。
+///
+/// - 通常時 (`settings_open == false`): `(calculate_window_width(config), BAR_HEIGHT)`
+/// - 設定展開時 (`settings_open == true`): `(calculate_window_width(config).max(SETTINGS_MIN_WIDTH), SETTINGS_EXPANDED_HEIGHT)`
+pub fn calculate_window_size(config: &Config, settings_open: bool) -> egui::Vec2 {
+    let base_width = calculate_window_width(config);
+    if settings_open {
+        egui::vec2(base_width.max(SETTINGS_MIN_WIDTH), SETTINGS_EXPANDED_HEIGHT)
+    } else {
+        egui::vec2(base_width, BAR_HEIGHT)
+    }
+}
+
 /// 現在の設定（各項目の表示/非表示フラグ）に基づいて、必要なメインウィンドウの横幅（px）を計算します。
 ///
 /// 不要な余白を削減し、表示項目数に応じた最適なウィンドウサイズを提供します。
@@ -144,5 +166,30 @@ mod tests {
 
         let width = calculate_window_width(&config);
         assert_eq!(width, 450.0);
+    }
+
+    #[test]
+    fn test_calculate_window_size_settings_toggle() {
+        let config = Config {
+            show_cpu: false,
+            show_mem: false,
+            show_net: false,
+            show_disk: false,
+            show_io: false,
+            show_version: false,
+            show_clock: false,
+            ..Default::default()
+        };
+
+        // 通常時は最小幅 200.0 x 高さ 32.0
+        let normal_size = calculate_window_size(&config, false);
+        assert_eq!(normal_size, egui::vec2(200.0, BAR_HEIGHT));
+
+        // 設定展開時は最小幅 300.0 x 展開高さ 475.0 に拡大される
+        let expanded_size = calculate_window_size(&config, true);
+        assert_eq!(
+            expanded_size,
+            egui::vec2(SETTINGS_MIN_WIDTH, SETTINGS_EXPANDED_HEIGHT)
+        );
     }
 }

@@ -80,6 +80,21 @@
   - **テスト・RustDoc の全面拡充**: 全 15 件のユニットテストと警告ゼロの RustDoc を整備。
 - **成果:** 超軽量・低負荷（CPU < 0.1%、メモリ約 15〜20MB）の特性を一切損なうことなく、実用性と拡張性・保守性を兼ね備えた v1.1.0 アーキテクチャを確立した。
 
+## 🐾 MileStone 11: `eframe` 描画バックエンドの `wgpu` から `glow` (OpenGL) への移行と設定UIの単一ウィンドウ化 (2026-11-17)
+- **課題:**
+  1. `eframe 0.35.0` のデフォルト feature に `wgpu` が含まれていたため、起動時に DX12 / Vulkan / シェーダコンパイラ等の巨大ドライバ DLL がロードされ、Private Memory が 292.06 MB（WorkingSet 333.12 MB）に達していた。
+  2. `eframe 0.35.0` の `glow` バックエンド（`glow_integration.rs`）では、サブビューポート（`show_viewport_immediate`）を閉じて破棄する際に OpenGL コンテキスト解放処理の不具合を抱えていた。
+- **修正内容:**
+  - `Cargo.toml` の `eframe` を `default-features = false, features = ["default_fonts", "glow", "persistence"]` の最小構成に変更し、`src/main.rs` の `NativeOptions` で `renderer: eframe::Renderer::Glow` を明示指定。
+  - 設定画面を別ビューポート（`show_viewport_immediate`）から、メインウィンドウの一時拡大（高さ 475px、最小幅 300px）による同一ルートウィンドウ内展開UIへ刷新（画面端での作業領域内クランプ補正・復帰制御付き）。
+- **成果（実測ベンチマーク比較）:**
+
+| 指標                      | `wgpu` (変更前) | `glow` (変更後) | 削減量 / 削減率          |
+| :------------------------ | :-------------- | :-------------- | :----------------------- |
+| **Private Memory**        | 292.06 MB       | 54.53 MB        | **-237.53 MB (-81.3%)**  |
+| **Working Set (RAM)**     | 333.12 MB       | 101.14 MB       | **-231.98 MB (-69.6%)**  |
+| **Release Binary (.exe)** | 8.26 MB         | 5.64 MB         | **-2.62 MB (-31.8%)**    |
+
 ---
 
 ## 📈 技術的注釈 (FOOTPRINT Logs)

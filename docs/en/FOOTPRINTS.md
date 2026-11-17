@@ -80,6 +80,21 @@ This is a comprehensive record of the technical transitions, backgrounds of deci
   - **Comprehensive Unit Tests & RustDoc**: Expanded the test suite to 15 unit tests and achieved zero-warning RustDoc coverage across all modules.
 - **Outcome:** Established the v1.1.0 architecture combining high usability, extensibility, and maintainability without sacrificing its ultra-lightweight footprint (CPU < 0.1%, RAM ~15–20MB).
 
+## 🐾 MileStone 11: Migration from `wgpu` to `glow` (OpenGL) Backend & Single-Window Settings UI (2026-11-17)
+- **Challenges:**
+  1. Because `eframe 0.35.0` enables `wgpu` in its default features, heavy DX12/Vulkan/shader compiler driver DLLs were loaded at startup, inflating Private Memory to 292.06 MB (WorkingSet 333.12 MB).
+  2. The `glow` integration in `eframe 0.35.0` (`glow_integration.rs`) has a multi-viewport teardown issue when destroying immediate secondary viewports (`show_viewport_immediate`).
+- **Modifications:**
+  - Configured `eframe` in `Cargo.toml` with `default-features = false, features = ["default_fonts", "glow", "persistence"]` and explicitly set `renderer: eframe::Renderer::Glow` in `NativeOptions`.
+  - Replaced the separate settings viewport (`show_viewport_immediate`) with single-window temporary expansion (height 475px, min width 300px) inside the root window, complete with monitor work-area boundary clamping and position restoration.
+- **Outcome (Measured Release Benchmarks):**
+
+| Metric                    | `wgpu` (Before) | `glow` (After)  | Reduction                |
+| :------------------------ | :-------------- | :-------------- | :----------------------- |
+| **Private Memory**        | 292.06 MB       | 54.53 MB        | **-237.53 MB (-81.3%)**  |
+| **Working Set (RAM)**     | 333.12 MB       | 101.14 MB       | **-231.98 MB (-69.6%)**  |
+| **Release Binary (.exe)** | 8.26 MB         | 5.64 MB         | **-2.62 MB (-31.8%)**    |
+
 ---
 
 ## 📈 Technical Notes (FOOTPRINT Logs)

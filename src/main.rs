@@ -95,6 +95,7 @@ impl eframe::App for SystemMonitor {
 
                     if drag_label.dragged() {
                         is_dragging = true;
+                        self.pos_adjusted_for_settings = false;
 
                         #[cfg(target_os = "windows")]
                         let current_mouse = win32::native::get_cursor_pos();
@@ -119,7 +120,7 @@ impl eframe::App for SystemMonitor {
                                 {
                                     new_pos = win32::apply_snap(
                                         new_pos,
-                                        egui::vec2(current_width, 32.0),
+                                        egui::vec2(current_width, ui::BAR_HEIGHT),
                                         work_area,
                                     );
                                 }
@@ -248,118 +249,61 @@ impl eframe::App for SystemMonitor {
                         }
                     });
                 });
-            });
 
-        // 設定画面を描画
-        let settings_open = self.settings_open;
-        if settings_open {
-            let mut open = settings_open;
-            let mut config_changed = false;
+                // 設定パネルを描画（glow のマルチビューポート破棄時不具合を回避するため同一ルートウィンドウ内へ展開）
+                if self.settings_open {
+                    let mut open = self.settings_open;
 
-            let mut builder = egui::ViewportBuilder::default()
-                .with_title("MiSysMon Settings")
-                .with_inner_size([300.0, 430.0])
-                .with_resizable(false)
-                .with_decorations(true)
-                .with_always_on_top();
+                    ui.add_space(6.0);
+                    ui.separator();
+                    ui.add_space(4.0);
 
-            if let Some(pos) = self.config.pos {
-                builder = builder.with_position(egui::pos2(pos.x, pos.y + 36.0));
-            }
+                    let settings_frame = egui::Frame::new()
+                        .fill(egui::Color32::from_rgba_unmultiplied(20, 20, 20, 240))
+                        .inner_margin(egui::Margin::symmetric(12, 10))
+                        .corner_radius(4.0);
 
-            ui.ctx().show_viewport_immediate(
-                egui::ViewportId::from_hash_of("settings_window"),
-                builder,
-                |ctx, class| {
-                    if class != egui::ViewportClass::Immediate {
-                        return;
-                    }
-
-                    egui::CentralPanel::default().show(ctx, |ui| {
+                    settings_frame.show(ui, |ui| {
+                        ui.set_max_width(280.0);
                         ui.heading("MiSysMon Settings");
                         ui.separator();
 
                         ui.group(|ui| {
                             ui.label("Display Options");
-                            if ui.checkbox(&mut self.config.show_cpu, "Show CPU").changed() {
-                                config_changed = true;
-                            }
-                            if ui
-                                .checkbox(&mut self.config.show_mem, "Show Memory")
-                                .changed()
-                            {
-                                config_changed = true;
-                            }
-                            if ui
-                                .checkbox(&mut self.config.show_net, "Show Network")
-                                .changed()
-                            {
-                                config_changed = true;
-                            }
-                            if ui
-                                .checkbox(&mut self.config.show_disk, "Show Disk")
-                                .changed()
-                            {
-                                config_changed = true;
-                            }
-                            if ui
-                                .checkbox(&mut self.config.show_io, "Show Disk IO")
-                                .changed()
-                            {
-                                config_changed = true;
-                            }
-                            if ui
-                                .checkbox(&mut self.config.show_version, "Show Version")
-                                .changed()
-                            {
-                                config_changed = true;
-                            }
-                            if ui
-                                .checkbox(&mut self.config.show_clock, "Show Clock")
-                                .changed()
-                            {
-                                config_changed = true;
-                            }
+                            ui.checkbox(&mut self.config.show_cpu, "Show CPU");
+                            ui.checkbox(&mut self.config.show_mem, "Show Memory");
+                            ui.checkbox(&mut self.config.show_net, "Show Network");
+                            ui.checkbox(&mut self.config.show_disk, "Show Disk");
+                            ui.checkbox(&mut self.config.show_io, "Show Disk IO");
+                            ui.checkbox(&mut self.config.show_version, "Show Version");
+                            ui.checkbox(&mut self.config.show_clock, "Show Clock");
                         });
 
-                        ui.add_space(10.0);
+                        ui.add_space(8.0);
 
                         ui.group(|ui| {
                             ui.label("Window Options");
-                            if ui
-                                .checkbox(
-                                    &mut self.config.enable_snap,
-                                    "Enable Window Snapping (15px)",
-                                )
-                                .changed()
-                            {
-                                config_changed = true;
-                            }
+                            ui.checkbox(
+                                &mut self.config.enable_snap,
+                                "Enable Window Snapping (15px)",
+                            );
 
-                            ui.add_space(5.0);
+                            ui.add_space(4.0);
 
                             ui.label("Opacity");
-                            let prev_opacity = self.config.opacity;
                             ui.add(egui::Slider::new(&mut self.config.opacity, 0.3..=1.0).text(""));
-                            if self.config.opacity != prev_opacity {
-                                config_changed = true;
-                            }
 
-                            ui.add_space(5.0);
+                            ui.add_space(4.0);
 
                             ui.label("Update Interval");
-                            let prev_interval = self.config.update_interval_secs;
                             ui.add(
                                 egui::Slider::new(&mut self.config.update_interval_secs, 0.5..=5.0)
                                     .step_by(0.5)
                                     .suffix("s"),
                             );
-                            if self.config.update_interval_secs != prev_interval {
-                                config_changed = true;
-                            }
                         });
 
-                        ui.add_space(15.0);
+                        ui.add_space(10.0);
 
                         ui.horizontal(|ui| {
                             if ui.button("Close").clicked() {
@@ -368,36 +312,54 @@ impl eframe::App for SystemMonitor {
                         });
                     });
 
-                    if ctx.input(|i| i.viewport().close_requested()) {
-                        open = false;
+                    self.settings_open = open;
+                }
+            });
+
+        // 目標ウィンドウサイズ（設定パネル開閉および表示項目トグルに応じた動的サイズ）を計算
+        let target_size = ui::calculate_window_size(&self.config, self.settings_open);
+
+        // 幅または高さが変更された場合のみサイズ指定コマンドおよび必要に応じた画面内座標補正を送信
+        if (self.last_width - target_size.x).abs() > 0.1
+            || (self.last_height - target_size.y).abs() > 0.1
+        {
+            self.last_width = target_size.x;
+            self.last_height = target_size.y;
+            ui.ctx()
+                .send_viewport_cmd(egui::ViewportCommand::InnerSize(target_size));
+
+            #[cfg(target_os = "windows")]
+            if let Some(pos) = self.config.pos {
+                if self.settings_open {
+                    let center_x = (pos.x + target_size.x / 2.0) as i32;
+                    let center_y = (pos.y + 16.0) as i32;
+                    if let Some(work_area) =
+                        win32::native::get_monitor_work_area(center_x, center_y)
+                    {
+                        let max_x =
+                            (work_area.right as f32 - target_size.x).max(work_area.left as f32);
+                        let max_y =
+                            (work_area.bottom as f32 - target_size.y).max(work_area.top as f32);
+                        let clamped_x = pos.x.clamp(work_area.left as f32, max_x);
+                        let clamped_y = pos.y.clamp(work_area.top as f32, max_y);
+                        if (clamped_x - pos.x).abs() > 0.5 || (clamped_y - pos.y).abs() > 0.5 {
+                            self.pos_adjusted_for_settings = true;
+                            ui.ctx()
+                                .send_viewport_cmd(egui::ViewportCommand::OuterPosition(
+                                    egui::pos2(clamped_x, clamped_y),
+                                ));
+                        }
                     }
-                },
-            );
-
-            self.settings_open = open;
-
-            if config_changed {
-                let new_width = ui::calculate_window_width(&self.config);
-                self.last_width = new_width;
-                ui.ctx()
-                    .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
-                        new_width, 32.0,
-                    )));
+                } else if self.pos_adjusted_for_settings {
+                    self.pos_adjusted_for_settings = false;
+                    ui.ctx()
+                        .send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos));
+                }
             }
         }
 
-        // 幅が変更された場合のみサイズ指定コマンドを送信
-        if (self.last_width - current_width).abs() > 0.1 {
-            self.last_width = current_width;
-            ui.ctx()
-                .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
-                    current_width,
-                    32.0,
-                )));
-        }
-
-        // ドラッグ中でない場合のみ現在のウィンドウ位置を監視して保存用に更新
-        if !is_dragging {
+        // ドラッグ中でなく、かつ設定展開による一時座標補正中でない場合のみ現在のウィンドウ位置を保存用に更新
+        if !is_dragging && !self.pos_adjusted_for_settings {
             ui.input(|i| {
                 if let Some(rect) = i.viewport().outer_rect {
                     self.config.pos = Some(rect.min);
@@ -425,10 +387,11 @@ fn main() -> eframe::Result<()> {
         None => return Ok(()),
     };
 
-    // 初期設定の読み込み（位置復元のため）
+    // 初期設定の読み込み（位置復元および Glow レンダラーの明示指定）
     let options = eframe::NativeOptions {
+        renderer: eframe::Renderer::Glow,
         viewport: egui::ViewportBuilder::default()
-            .with_inner_size([1210.0, 32.0])
+            .with_inner_size([1210.0, ui::BAR_HEIGHT])
             .with_resizable(false) // リサイズ禁止
             .with_decorations(false) // タイトルバー非表示
             .with_transparent(true) // 背景透過
@@ -441,7 +404,7 @@ fn main() -> eframe::Result<()> {
         options,
         Box::new(|cc| {
             let monitor = SystemMonitor::new(cc);
-            let initial_width = ui::calculate_window_width(&monitor.config);
+            let initial_size = ui::calculate_window_size(&monitor.config, false);
 
             // 保存された位置がある場合は適用
             if let Some(pos) = monitor.config.pos {
@@ -460,10 +423,7 @@ fn main() -> eframe::Result<()> {
 
             // 起動時に動的サイズを設定
             cc.egui_ctx
-                .send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
-                    initial_width,
-                    32.0,
-                )));
+                .send_viewport_cmd(egui::ViewportCommand::InnerSize(initial_size));
 
             Ok(Box::new(monitor))
         }),

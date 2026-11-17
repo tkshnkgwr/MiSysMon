@@ -99,11 +99,17 @@ pub struct SystemMonitor {
     /// メモリ使用率の直近履歴データ（スパークライン表示用、最大 30 点）。
     pub mem_history: Vec<f32>,
 
-    /// 設定サブウィンドウが開いているかどうかのフラグ。
+    /// 設定パネルが展開表示されているかどうかのフラグ。
     pub settings_open: bool,
 
     /// 最後に適用したメインウィンドウの横幅（px）。
     pub last_width: f32,
+
+    /// 最後に適用したメインウィンドウの高さ（px）。
+    pub last_height: f32,
+
+    /// 設定パネル展開時に画面端からはみ出さないよう一時的に座標補正を行ったかどうかのフラグ。
+    pub pos_adjusted_for_settings: bool,
 
     /// ドラッグ移動開始時のウィンドウ座標。
     pub drag_start_win_pos: Option<eframe::egui::Pos2>,
@@ -194,6 +200,8 @@ impl SystemMonitor {
             mem_history: Vec::new(),
             settings_open: false,
             last_width: 0.0,
+            last_height: 0.0,
+            pos_adjusted_for_settings: false,
             drag_start_win_pos: None,
             drag_start_mouse_pos: None,
         }

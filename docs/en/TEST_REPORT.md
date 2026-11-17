@@ -2,7 +2,7 @@
 
 # Test Report: Mini System Monitor (MiSysMon)
 
-**Target Version**: mini-system-monitor v1.2.0
+**Target Version**: mini-system-monitor v1.3.0
 
 ## 1. Test Environment
 - **OS:** Windows 11 / Windows 10
@@ -13,7 +13,7 @@
 
 ## 2. Unit Test and Verification Results
 
-Executed all 15 automated unit tests and functional checks, confirming that all items passed successfully:
+Executed all 16 automated unit tests and functional checks, confirming that all items passed successfully:
 
 | Test Category            | Test Item / Function                                            | Result | Notes / Methodology                  |
 | :----------------------- | :-------------------------------------------------------------- | :----: | :----------------------------------- |
@@ -29,6 +29,7 @@ Executed all 15 automated unit tests and functional checks, confirming that all 
 | **UI Width (All On)**    | Required width calculation with all elements enabled (1210px)   |  Pass  | `test_calculate_window_width_all...` |
 | **UI Width (Min Clamp)** | Minimum width clamp with all elements disabled (200px)          |  Pass  | `test_calculate_window_width_all...` |
 | **UI Width (Custom)**    | Accurate dynamic width calculation for custom selections        |  Pass  | `test_calculate_window_width_cus...` |
+| **UI Size (Settings)**   | Single-window size calculation for inline settings expansion    |  Pass  | `test_calculate_window_size_sett...` |
 | **History Queue**        | Sparkline Vec capacity capping (30 items) with FIFO sliding     |  Pass  | `test_push_history_capacity`         |
 | **Log Rotation**         | `sensors_debug.log` multi-generation shifting (`.1`, `.2`)      |  Pass  | `test_rotate_logs_succession`        |
 | **Telemetry Delta**      | Cumulative delta calculation and underflow clamp (`saturating`) |  Pass  | `test_saturating_diff_calculation`   |

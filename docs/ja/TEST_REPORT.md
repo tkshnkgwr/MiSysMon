@@ -2,7 +2,7 @@
 
 # Test Report: Mini System Monitor (MiSysMon)
 
-**適合バージョン**: mini-system-monitor v1.2.0
+**適合バージョン**: mini-system-monitor v1.3.0
 
 ## 1. テスト環境
 - **OS:** Windows 11 / Windows 10
@@ -13,7 +13,7 @@
 
 ## 2. ユニットテストおよび機能検証結果
 
-全 15 件の自動ユニットテストおよび機能検証を実施し、すべて正常に合格（Passed）することを確認しました。
+全 16 件の自動ユニットテストおよび機能検証を実施し、すべて正常に合格（Passed）することを確認しました。
 
 | 検証カテゴリ           | 検証項目                                                          | 結果 | 備考 / 検証方式                      |
 | :--------------------- | :---------------------------------------------------------------- | :--: | :----------------------------------- |
@@ -29,6 +29,7 @@
 | **UI幅（全表示）**     | 全コンポーネント有効時の必要ウィンドウ幅計算（1210px）            | 合格 | `test_calculate_window_width_all...` |
 | **UI幅（最小制限）**   | 全コンポーネント無効時の最小ウィンドウ幅クランプ（200px）         | 合格 | `test_calculate_window_width_all...` |
 | **UI幅（任意選択）**   | 任意トグル時の正確な横幅動的計算                                  | 合格 | `test_calculate_window_width_cus...` |
+| **UI寸法（設定展開）** | 設定パネル開閉に応じた単一ウィンドウサイズ計算（475px展開）       | 合格 | `test_calculate_window_size_sett...` |
 | **履歴キュー管理**     | スパークライン用データ配列の最大長（30件）維持と FIFO スライド    | 合格 | `test_push_history_capacity`         |
 | **ログローテーション** | `sensors_debug.log` の最大 3 世代バックアップシフト (`.1`, `.2`)  | 合格 | `test_rotate_logs_succession`        |
 | **通信量差分計算**     | 累積値差分計算およびアンダーフロー時のゼロ安全保護 (`saturating`) | 合格 | `test_saturating_diff_calculation`   |
